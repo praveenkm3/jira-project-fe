@@ -15,7 +15,8 @@ import { UseAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import ProjectForm from "./ProjectForm";
-import { IssueDetails } from "./IssueDetails";
+import { IssueTable } from "./IssueTable";
+import IssueFormDialog from "./IssueForm"; 
 
 
 
@@ -35,7 +36,7 @@ export const ProjectDetails = () => {
   }
 
   return (
-    <> 
+    <>
       <Box
         sx={{
           display: "flex",
@@ -88,8 +89,8 @@ export const ProjectDetails = () => {
               <MenuItem
                 sx={{ color: "error.main" }}
                 onClick={() => {
-                 setAnchorEl(null);
-                 alert('Delete Project');
+                  setAnchorEl(null);
+                  alert("Delete Project");
                 }}
               >
                 Delete Project
@@ -98,7 +99,7 @@ export const ProjectDetails = () => {
           </>
         )}
       </Box>
- 
+
       <Box
         sx={{
           display: "flex",
@@ -118,17 +119,22 @@ export const ProjectDetails = () => {
         >
           Add Issue
         </Button>
-      </Box>
-      {issueDialogOpen && <h5>Add New Issue</h5>}
+      </Box> 
 
-      {/* <IssueTable issues={issues} /> */}
-      <IssueDetails />
+      <IssueTable projectId={projectId as string} />
 
       <ProjectForm
         open={editOpen}
         onClose={() => setEditOpen(false)}
         initialData={project}
       />
+      
+      <IssueFormDialog
+        open={issueDialogOpen}
+        onClose={() => setIssueDialogOpen(false)} 
+        projectId={project.project_id}
+      />
     </>
+  
   );
 };

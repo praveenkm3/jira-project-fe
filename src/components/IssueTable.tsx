@@ -1,4 +1,4 @@
-import { useGetIssues } from "../hooks/issues.hook";
+import {useGetProjectIssues } from "../hooks/issues.hook";
 import PageLoader from "./Loader";
 import { DataGrid, type GridRowsProp, type GridColDef } from "@mui/x-data-grid";
 
@@ -12,11 +12,11 @@ const columns: GridColDef[] = [
   { field: "reporter", headerName: "Creator",width:200},
   { field: "assignee", headerName: "Assignee",width:200 },
 ];
-import type { Issue } from "../utils/issue.types";
+import type { IssueType } from "../utils/issue.types";
 
-export const IssueDetails = () => {
-  const { data, isLoading } = useGetIssues();
-  const rows :GridRowsProp[]= data?.map((issue: Issue) => ({
+export const IssueTable = ({projectId}:{projectId:string}) => {
+  const { data, isLoading } = useGetProjectIssues(projectId);
+  const rows :GridRowsProp[]= data?.map((issue: IssueType) => ({
     id: issue.issue_id,
     issue_title: issue.issue_title,
     issue_number:issue.issue_number,

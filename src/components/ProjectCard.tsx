@@ -30,10 +30,7 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
         borderRadius: "12px",
         borderColor: "#EAEAEC",
         transition: "border-color 120ms ease, box-shadow 120ms ease",
-        "&:hover": {
-          borderColor: "#D9D9E3",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-        },
+        boxShadow: 10
       }}
     >
       <CardActionArea

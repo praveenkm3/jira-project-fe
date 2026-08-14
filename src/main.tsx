@@ -8,16 +8,22 @@ import AuthProvider from "./contexts/AuthContext.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App.tsx";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
+
 const root = createRoot(document.getElementById("root")!);
 
 root.render(
   <>
     <QueryClientProvider client={queryClient}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
       <AuthProvider>
         <RouterProvider router={router} />
         <App/>
         <ToastContainer position="top-right" autoClose={3000} theme="dark" />
       </AuthProvider>
+      </LocalizationProvider>
     </QueryClientProvider>
   </>,
 );

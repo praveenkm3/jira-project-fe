@@ -16,3 +16,10 @@ export type CurrentuserType = {
   role?: string;
   userId?: number;
 };
+export type notifyType={
+  notification_id:string,
+  is_read:boolean,
+  message:string,
+  createdAt:string
+
+}
