@@ -17,3 +17,21 @@ export async function updateProject(projectId:string,data:ProjectFormData){
     const response=await api.put(`/api/project/update/${projectId}`,data);
     return response.data;
 }
+export async function getAllUsers(){
+    const response=await api.get(`/api/users`);
+    return response.data;
+}
+
+export async function addProjectMembers(projectId:string,data:string[]){
+    const response=await api.post(`/api/project/${projectId}/members`,{data});
+    return response.data;
+}
+export async function updateProjectMembers(projectId:string,data:string[]){
+    const response=await api.put(`/api/project/${projectId}/members`,{data});
+    return response.data;
+}
+
+export async function removeProjectMember(projectId:string,userId:string){
+    const response=await api.delete(`/api/project/${projectId}/members/${userId}`);
+    return response.data;
+}

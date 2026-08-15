@@ -14,7 +14,6 @@ export interface ProjectType {
   members: ProjectMemberType[];
 }
 
-
 export interface ProjectFormData {
   project_name: string;
   project_key: string;

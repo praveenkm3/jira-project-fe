@@ -14,9 +14,9 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { UseAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
-import ProjectForm from "./ProjectForm";
+import ProjectForm from "../dialogs/ProjectForm";
 import { IssueTable } from "./IssueTable";
-import IssueFormDialog from "./IssueForm"; 
+import IssueFormDialog from "../dialogs/IssueForm"; 
 
 
 

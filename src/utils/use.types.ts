@@ -14,12 +14,18 @@ export type CurrentuserType = {
   exp?: number;
   iat?: number;
   role?: string;
-  userId?: number;
+  id?: number;
 };
 export type notifyType={
   notification_id:string,
   is_read:boolean,
   message:string,
   createdAt:string
+}
 
+export interface UserOption {
+  id: string;
+  name: string;
+  email: string;
+  role: "admin" | "developer";
 }

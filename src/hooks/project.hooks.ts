@@ -1,9 +1,14 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
+import queryClient from "./queryClient";
 import {
   fetchProjects,
   addProjects,
   fetchSpecificProject,
   updateProject,
+  getAllUsers,
+  addProjectMembers,
+  removeProjectMember,
+  updateProjectMembers
 } from "../api/project.api";
 import type { ProjectFormData } from "../utils/project.types";
 
@@ -15,11 +20,12 @@ export const useFetchProjects = () => {
 };
 export const useFetchSpecificProject = (projectId: string) => {
   return useQuery({
-    queryKey: ["all-projects", projectId],
+    queryKey: ["get-specific-projects", projectId],
     queryFn: async () => {
       const response = await fetchSpecificProject(projectId);
       return response;
     },
+    enabled: !!projectId,
   });
 };
 export const useAddProject = (isAdmin: boolean) => {
@@ -30,6 +36,9 @@ export const useAddProject = (isAdmin: boolean) => {
         throw new Error("Only admins can add projects");
       }
     },
+    onSuccess:()=>{
+      queryClient.invalidateQueries({queryKey:['all-projects']})
+    }
   });
 };
 export const useUpdateProject = (isAdmin: boolean, projectId: string) => {
@@ -41,5 +50,69 @@ export const useUpdateProject = (isAdmin: boolean, projectId: string) => {
       const response =await updateProject(projectId, data);
       return response;
     },
+    onSuccess:()=>{
+      queryClient.invalidateQueries({queryKey:['get-specific-projects']})
+    }
   });
 };
+export const useFetchAllUsers = () => {
+  return useQuery({
+    queryKey: ["fetch-users"],
+    queryFn: getAllUsers,
+  });
+};
+export const useAddProjectMembers = (isAdmin:boolean,projectId:string) => {
+  return useMutation({
+    mutationFn: async (data:string[]) => {
+      if (!isAdmin) {
+        throw new Error("Only admins can Add project members");
+      }
+      const response = await addProjectMembers (projectId,data);
+      return response;
+    },
+    onSuccess:()=>{
+      queryClient.invalidateQueries({queryKey:["all-projects"]})
+    }
+  });
+};
+export const useUpdateMembers = (isAdmin:boolean,projectId:string) => {
+  return useMutation({
+    mutationFn: async (data:string[]) => {
+      if (!isAdmin) {
+        throw new Error("Only admins can Add project members");
+      }
+      const response = await updateProjectMembers (projectId,data);
+      return response;
+    },
+    onSuccess:()=>{
+      queryClient.invalidateQueries({queryKey:["all-projects"]})
+    }
+  });
+};
+export const useRemoveMembers = (isAdmin:boolean,projectId:string) => {
+  return useMutation({
+    mutationFn: async (userId:string) => {
+      if (!isAdmin) {
+        throw new Error("Only admins can Add project members");
+      }
+      const response = await removeProjectMember (projectId,userId);
+      return response;
+    },
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
