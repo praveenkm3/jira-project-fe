@@ -10,6 +10,7 @@ import {
   removeProjectMember,
   updateProjectMembers,
   deleteProject,
+  getMyProjectForSearch
 } from "../api/project.api";
 import type { ProjectFormData } from "../utils/project.types";
 
@@ -38,7 +39,8 @@ export const useAddProject = (isAdmin: boolean) => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["all-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["all-projects"] }); 
+      queryClient.invalidateQueries({ queryKey: ["my-project-search"] });
     },
   });
 };
@@ -104,9 +106,14 @@ export const useRemoveMembers = (isAdmin: boolean, projectId: string) => {
 export const useProjectDelete = () => {
   return useMutation({
     mutationFn: deleteProject,
-    onSuccess:()=>{
-      queryClient.invalidateQueries({queryKey:['all-projects']})
-    }
-  }
-);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-projects"] });
+    },
+  });
+};
+export const useGetMyProjectForSearch = () => {
+  return useQuery({
+    queryKey: ["my-project-search"],
+    queryFn:getMyProjectForSearch
+  });
 };

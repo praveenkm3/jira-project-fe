@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import SearchIcon from "@mui/icons-material/Search"; 
+import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
@@ -19,21 +19,27 @@ import { useLogout } from "../hooks/auth.hooks";
 import { useNavigate } from "react-router";
 import { UseAuth } from "../contexts/AuthContext";
 import { toast } from "react-toastify";
-import Notifications from "./Notifications"; 
+import Notifications from "./Notifications";
 import NotificationsIcon from "@mui/icons-material/NotificationsOutlined";
- 
+import { useGetMyProjectForSearch } from "../hooks/project.hooks";
+import { find_prefix_matches } from "../algorithms/binary_search";
+import type { ProjectSearchType } from "../utils/project.types";
 
-export default function Navbar() { 
+export default function Navbar() {
   const { mutate } = useLogout();
   const navigate = useNavigate();
+  const { data } = useGetMyProjectForSearch();
   const { removeUser, currentUser } = UseAuth()!;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => setAnchorEl(null); 
+  const handleClose = () => setAnchorEl(null);
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
+  const [search, setSearch] = useState<string>("");
+  const matchedresult = find_prefix_matches(search, data ?? []);
+  console.log(matchedresult)
   const handleLogout = () => {
     mutate(undefined, {
       onSuccess: () => {
@@ -68,6 +74,7 @@ export default function Navbar() {
 
       <Box
         sx={{
+          position: "relative",
           display: { xs: "none", sm: "flex" },
           alignItems: "center",
           gap: 1,
@@ -75,16 +82,63 @@ export default function Navbar() {
           py: 0.5,
           borderRadius: "8px",
           bgcolor: "rgba(0,0,0,0.04)",
-          width: 300
+          width: 300,
         }}
       >
-        <SearchIcon fontSize="small" sx={{ color: "text.secondary" }} />
-        <InputBase placeholder="Search…" sx={{ fontSize: 14, flex: 1 }} />
+        <SearchIcon fontSize="small" sx={{ color: "black" }} />
+
+        <InputBase
+          placeholder="Search…"
+          sx={{
+            fontSize: 14,
+            flex: 1,
+          }}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        {matchedresult.length > 0 && search && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              mt: 1,
+              bgcolor: "background.paper",
+              borderRadius: 2,
+              boxShadow: 3,
+              zIndex: 1300,
+              overflow: "hidden",
+            }}
+          >
+            {matchedresult.map((item: ProjectSearchType) => (
+              <Box
+                key={item.project_id}
+                onClick={() => {
+                  navigate(`/projects/${item.project_id}`);
+                  setSearch("");
+                }}
+                sx={{
+                  px: 2,
+                  py: 1.5,
+                  cursor: "pointer",
+
+                  "&:hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+              >
+                {item.project_name}
+              </Box>
+            ))}
+          </Box>
+        )}
       </Box>
 
       <IconButton onClick={(e) => setNotifAnchorEl(e.currentTarget)}>
         <NotificationsIcon />
-      </IconButton> 
+      </IconButton>
 
       <Notifications
         anchorEl={notifAnchorEl}

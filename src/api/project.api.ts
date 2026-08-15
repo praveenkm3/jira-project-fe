@@ -40,3 +40,7 @@ export async function deleteProject(projectId:string){
     const response=await api.delete(`/api/project/delete/${projectId}`);
     return response.data;
 }
+export async function getMyProjectForSearch(){
+    const response=await api.get(`/api/project/my-projects`);
+    return response.data;
+}
