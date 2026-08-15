@@ -75,7 +75,7 @@ export default function Navbar() {
           py: 0.5,
           borderRadius: "8px",
           bgcolor: "rgba(0,0,0,0.04)",
-          width: 240,
+          width: 300
         }}
       >
         <SearchIcon fontSize="small" sx={{ color: "text.secondary" }} />

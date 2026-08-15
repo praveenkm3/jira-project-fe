@@ -35,3 +35,8 @@ export async function removeProjectMember(projectId:string,userId:string){
     const response=await api.delete(`/api/project/${projectId}/members/${userId}`);
     return response.data;
 }
+
+export async function deleteProject(projectId:string){
+    const response=await api.delete(`/api/project/delete/${projectId}`);
+    return response.data;
+}
