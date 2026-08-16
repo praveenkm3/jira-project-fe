@@ -1,5 +1,5 @@
 import { useMutation ,useQuery} from "@tanstack/react-query"; 
-import { fetchIssues,fetchProjectIssues,addIssue, fetchProjectMembers } from "../api/issues.api"; 
+import { fetchIssues,fetchProjectIssues,addIssue, fetchProjectMembers,getFetchIssueById,updateIssueStatus } from "../api/issues.api"; 
 import type{ IssueFormData } from "../utils/issue.types";
 import queryClient from "./queryClient";
 
@@ -42,5 +42,24 @@ export const useGetProjectMembers = (prjectId:string) => {
       return response;
     },
     enabled:!!prjectId,
+  })
+};
+export const useGetIssueById = (issueId:string) => {
+  return useQuery({
+    queryKey:['get-issues-by-id',issueId],
+    queryFn:async ()=>{
+      return getFetchIssueById(issueId);
+    }
+  })
+};
+export const useUpdateIssueStatus = () => {
+  return useMutation({
+    mutationFn:async ({issueId,status}:{issueId:string,status:string})=>{
+      const response = await updateIssueStatus(issueId,status);
+      return response;
+    },
+    onSuccess:()=>{
+      queryClient.invalidateQueries({queryKey:['get-issues']})
+    }
   })
 };

@@ -15,7 +15,7 @@ import { UseAuth } from "../contexts/AuthContext";
 import AddMembers from "../dialogs/AddMembers";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import EditMembers from "../dialogs/EditMembers";
-
+import { initials } from "../algorithms/strings_operations";
 
 
 const statusColors: Record<
@@ -25,10 +25,6 @@ const statusColors: Record<
   ACTIVE: { bg: "rgba(34,197,94,0.12)", text: "#15803D" },
   COMPLETED: { bg: "rgba(99,102,241,0.12)", text: "#4338CA" },
 };
-
-function initials(name: string) {
-  return name.trim().charAt(0).toUpperCase();
-}
 
 export default function ProjectCard({ project }: { project: ProjectType }) {
   const navigate = useNavigate();

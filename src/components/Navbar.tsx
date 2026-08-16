@@ -39,7 +39,6 @@ export default function Navbar() {
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
   const [search, setSearch] = useState<string>("");
   const matchedresult = find_prefix_matches(search, data ?? []);
-  console.log(matchedresult)
   const handleLogout = () => {
     mutate(undefined, {
       onSuccess: () => {
@@ -88,7 +87,7 @@ export default function Navbar() {
         <SearchIcon fontSize="small" sx={{ color: "black" }} />
 
         <InputBase
-          placeholder="Search…"
+          placeholder="Search for projects..."
           sx={{
             fontSize: 14,
             flex: 1,

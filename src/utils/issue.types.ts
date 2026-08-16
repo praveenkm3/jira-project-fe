@@ -60,6 +60,7 @@ export interface IssueCardType {
 }
 export interface cardIssueType{
     issue_title:string,
+    issue_id:string,
 issue_type:string,
 issue_priority:string,
 issue_status:string,
@@ -72,4 +73,14 @@ export interface Member {
   id: string;
   name: string;
   email: string;
+}
+export interface IssueCardProps {
+  issue_id:string
+  title: string;
+  typeText: string;
+  statusText: string;
+  priorityText: string;
+  reporter_email: string;
+  onClick?: () => void;
+  onStatusChange?: (issueId: string, newStatus: string) => void;
 }
