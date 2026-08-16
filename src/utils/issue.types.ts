@@ -27,9 +27,9 @@ export type IssueTypeFor = "Bug" | "Feature" | "Task";
 export interface IssueFormData {
   title: string;
   description: string;
-  status: IssueStatus;
-  priority: IssuePriority;
-  type: IssueTypeFor;
+  status: IssueStatus | string;
+  priority: IssuePriority |string;
+  type: IssueTypeFor |string;
   assignee_id: string;
    due_date: string;
 }
@@ -83,4 +83,10 @@ export interface IssueCardProps {
   reporter_email: string;
   onClick?: () => void;
   onStatusChange?: (issueId: string, newStatus: string) => void;
+}
+export interface IssueFormDialogProps {
+  open: boolean;
+  onClose: () => void;
+  projectId: string;
+  issue?: IssueType | null;
 }

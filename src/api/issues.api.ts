@@ -30,6 +30,11 @@ export async function updateIssueStatus(issueId:string,status:string){
     return response.data;
 }
 export async function deleteIssue(issueId:string){
-    const response=await api.delete(`/api/issues/${issueId}`);
+    const response=await api.delete(`/api/issues/delete/${issueId}`);
+    return response.data;
+}
+
+export async function updateIssue(issueId:string,data:IssueFormData){
+    const response=await api.put(`/api/issues/update/${issueId}`,data);
     return response.data;
 }

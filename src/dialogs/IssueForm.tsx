@@ -17,14 +17,16 @@ import { toast } from "react-toastify";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useAddIssues, useGetProjectMembers } from "../hooks/issues.hook";
+import { UseAuth } from "../contexts/AuthContext";
 import type {
   IssueFormData,
   IssueStatus,
   IssuePriority,
   IssueTypeFor,
-  Member
+  Member,
+  IssueFormDialogProps,
 } from "../utils/issue.types";
-
+import { useUpdateIssue } from "../hooks/issues.hook";
 const STATUS_OPTIONS: IssueStatus[] = ["Open", "In Progress", "Done"];
 const PRIORITY_OPTIONS: IssuePriority[] = ["Low", "Medium", "High"];
 const TYPE_OPTIONS: IssueTypeFor[] = ["Bug", "Feature", "Task"];
@@ -48,29 +50,40 @@ const emptyForm: IssueFormData = {
   due_date: "",
 };
 
-interface IssueFormDialogProps {
-  open: boolean;
-  onClose: () => void;
-  projectId: string;
-}
-
 export default function IssueFormDialog({
   open,
   onClose,
   projectId,
+  issue,
 }: IssueFormDialogProps) {
+  const {currentUser}=UseAuth()!;
   const { mutate: addIssue, isPending } = useAddIssues(projectId);
   const { data: members } = useGetProjectMembers(projectId);
 
   const [formData, setFormData] = useState<IssueFormData>(emptyForm);
   const [dueDate, setDueDate] = useState<Dayjs | null>(null);
-
+  const isAuthor=currentUser?.id===issue?.reporter.id
+  const { mutate: updateIssue } = useUpdateIssue(projectId,isAuthor);
   useEffect(() => {
-    if (open) {
+    if (!open) return;
+
+    if (issue) {
+      setFormData({
+        title: issue.issue_title,
+        description: issue.issue_description,
+        status: issue.issue_status,
+        priority: issue.issue_priority,
+        type: issue.issue_type,
+        assignee_id: issue.assignee?.id ?? "",
+        due_date: issue.issue_due_date ?? "",
+      });
+
+      setDueDate(issue.issue_due_date ? dayjs(issue.issue_due_date) : null);
+    } else {
       setFormData(emptyForm);
       setDueDate(null);
     }
-  }, [open]);
+  }, [open, issue]);
 
   const handleChange =
     (field: keyof IssueFormData) =>
@@ -88,14 +101,28 @@ export default function IssueFormDialog({
       return;
     }
     const payload = { ...formData, due_date: dueDate.format("YYYY-MM-DD") };
-
-    addIssue(payload, {
-      onSuccess: () => {
-        toast.success("Issue created successfully");
-        onClose();
-      },
-      onError: () => toast.error("Issue not created"),
-    });
+    if (issue) {
+      updateIssue(
+        { issueId: issue.issue_id, data: payload },
+        {
+          onSuccess: () => { 
+            toast.success("Issue Updated Successfully");
+            onClose();
+          },
+          onError: () => {
+            toast.error("Issue Not Updated Successfully");
+          },
+        },
+      );
+    } else {
+      addIssue(payload, {
+        onSuccess: () => {
+          toast.success("Issue created successfully");
+          onClose();
+        },
+        onError: () => toast.error("Issue not created"),
+      });
+    }
   };
 
   return (
@@ -182,7 +209,7 @@ export default function IssueFormDialog({
             label="Due Date"
             value={dueDate}
             onChange={(newValue) => setDueDate(newValue)}
-            minDate={dayjs()} // restricts to today or later — blocks past dates
+            minDate={dayjs()}
             slotProps={{
               textField: {
                 fullWidth: true,
@@ -193,12 +220,23 @@ export default function IssueFormDialog({
 
           <Autocomplete<Member>
             options={members ?? []}
+            value={
+              members?.find(
+                (member: { email: string; id: string }) =>
+                  member.id === formData.assignee_id,
+              ) ?? null
+            }
             getOptionLabel={(member) => member.name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             renderOption={(props, member) => (
               <Box
                 component="li"
                 {...props}
-                sx={{ display: "flex", gap: 1, alignItems: "center" }}
+                sx={{
+                  display: "flex",
+                  gap: 1,
+                  alignItems: "center",
+                }}
               >
                 <Avatar sx={{ width: 24, height: 24, fontSize: 12 }}>
                   {member.name.charAt(0).toUpperCase()}
@@ -230,7 +268,7 @@ export default function IssueFormDialog({
           disabled={isPending}
           sx={{ textTransform: "none", borderRadius: 2 }}
         >
-          {isPending ? "Saving..." : "Save"}
+          {issue ? "Update" : "Save"}
         </Button>
       </DialogActions>
     </Dialog>
