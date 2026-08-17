@@ -6,22 +6,34 @@ import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import Tooltip from "@mui/material/Tooltip";
+import Button from "@mui/material/Button";
+import PersonAddIcon from "@mui/icons-material/PersonAddOutlined";
 import { useNavigate } from "react-router";
-import type{ProjectType } from "../utils/project.types";
+import { useState } from "react";
+import type { ProjectType } from "../utils/project.types";
+import { UseAuth } from "../contexts/AuthContext";
+import AddMembers from "../dialogs/AddMembers";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import EditMembers from "../dialogs/EditMembers";
+import { initials } from "../algorithms/strings_operations";
 
 
-const statusColors: Record<ProjectType["project_status"], { bg: string; text: string }> = {
+const statusColors: Record<
+  ProjectType["project_status"],
+  { bg: string; text: string }
+> = {
   ACTIVE: { bg: "rgba(34,197,94,0.12)", text: "#15803D" },
-  COMPLETED: { bg: "rgba(99,102,241,0.12)", text: "#4338CA" }
+  COMPLETED: { bg: "rgba(99,102,241,0.12)", text: "#4338CA" },
 };
-
-function initials(name: string) {
-  return name.trim().charAt(0).toUpperCase();
-}
 
 export default function ProjectCard({ project }: { project: ProjectType }) {
   const navigate = useNavigate();
+  const { currentUser } = UseAuth()!;
+  const isAdmin = currentUser ? currentUser.role === "admin" : false;
   const status = statusColors[project.project_status] ?? statusColors.ACTIVE;
+  const [manageMembersOpen, setManageMembersOpen] = useState(false);
+  const [addMembersOpen, setAddMembersOpen] = useState(false);
+  const existedMembers = project.members.map((m) => m.user.id) as string[];
 
   return (
     <Card
@@ -30,20 +42,32 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
         borderRadius: "12px",
         borderColor: "#EAEAEC",
         transition: "border-color 120ms ease, box-shadow 120ms ease",
-        "&:hover": {
-          borderColor: "#D9D9E3",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-        },
+        boxShadow: 10,
+        minHeight: 200,
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <CardActionArea
         onClick={() => navigate(`/projects/${project.project_id}`)}
-        sx={{ p: 2.25 }}
+        sx={{ p: 2.25, flex: 1 }}
       >
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1.5 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            mb: 1.5,
+          }}
+        >
           <Box sx={{ minWidth: 0 }}>
             <Typography
-              sx={{ fontSize: 15, fontWeight: 600, color: "#1A1A1F", lineHeight: 1.3 }}
+              sx={{
+                fontSize: 15,
+                fontWeight: 600,
+                color: "#1A1A1F",
+                lineHeight: 1.3,
+              }}
               noWrap
             >
               {project.project_name}
@@ -67,9 +91,25 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
           />
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 2 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, minWidth: 0 }}>
-            <Avatar sx={{ width: 22, height: 22, fontSize: 11, bgcolor: "#6366F1" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mt: 2,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.75,
+              minWidth: 0,
+            }}
+          >
+            <Avatar
+              sx={{ width: 22, height: 22, fontSize: 11, bgcolor: "#6366F1" }}
+            >
               {initials(project.created_by.name)}
             </Avatar>
             <Typography sx={{ fontSize: 12.5, color: "#63656F" }} noWrap>
@@ -89,7 +129,10 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
             }}
           >
             {project.members.map((m) => (
-              <Tooltip key={m.project_members_id} title={`${m.user.name} · ${m.user.role}`}>
+              <Tooltip
+                key={m.project_members_id}
+                title={`${m.user.name} · ${m.user.role}`}
+              >
                 <Avatar sx={{ bgcolor: "#EEF0FF", color: "#4338CA" }}>
                   {initials(m.user.name)}
                 </Avatar>
@@ -98,6 +141,59 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
           </AvatarGroup>
         </Box>
       </CardActionArea>
+
+      {isAdmin && (
+        <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+          
+           
+          <Button
+          startIcon={<EditOutlinedIcon fontSize="small" />}
+          onClick={(e) => {
+            e.stopPropagation();
+            setManageMembersOpen(true);
+          }}
+          sx={{
+            textTransform: "none",
+            fontSize: 13,
+            fontWeight: 600,
+            py: 1.25,
+          }}
+        >
+          Remove Members
+        </Button>
+          <Button
+            startIcon={<PersonAddIcon fontSize="small" />}
+            onClick={(e) => {
+              e.stopPropagation();
+              setAddMembersOpen(true);
+            }}
+            sx={{
+              textTransform: "none",
+              fontSize: 13,
+              fontWeight: 600,
+              borderRadius: 0,
+              py: 1.25,
+            }}
+          >
+            Add Members
+          </Button>
+        </Box>
+      )}
+
+      <AddMembers
+        open={addMembersOpen}
+        onClose={() => setAddMembersOpen(false)}
+        projectId={project.project_id}
+        existingMemberIds={existedMembers}
+      />
+
+
+      <EditMembers
+        open={manageMembersOpen}
+        onClose={() => setManageMembersOpen(false)}
+        projectId={project.project_id}
+        members={project.members}
+      />
     </Card>
   );
 }

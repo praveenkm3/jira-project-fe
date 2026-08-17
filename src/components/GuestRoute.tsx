@@ -5,7 +5,7 @@ export function GuestRoute() {
   const { currentUser } = UseAuth()!;
 
   if (currentUser) { 
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/projects" replace />;
   }
 
   return <Outlet />;

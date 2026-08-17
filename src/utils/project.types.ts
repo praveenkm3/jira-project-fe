@@ -14,10 +14,13 @@ export interface ProjectType {
   members: ProjectMemberType[];
 }
 
-
 export interface ProjectFormData {
   project_name: string;
   project_key: string;
   project_description: string;
   project_status: ProjectStatus
+}
+export type ProjectSearchType={
+    project_id:string,
+    project_name:string
 }

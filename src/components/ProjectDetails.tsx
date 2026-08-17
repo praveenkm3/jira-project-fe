@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { useFetchSpecificProject } from "../hooks/project.hooks";
+import { useFetchSpecificProject, useProjectDelete } from "../hooks/project.hooks";
 import PageLoader from "./Loader";
 import {
   Box,
@@ -14,16 +14,20 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { UseAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
-import ProjectForm from "./ProjectForm";
-import { IssueDetails } from "./IssueDetails";
-
+import ProjectForm from "../dialogs/ProjectForm";
+import { IssueTable } from "./IssueTable";
+import IssueFormDialog from "../dialogs/IssueForm"; 
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 
 export const ProjectDetails = () => {
+  const navigate=useNavigate();
   const { projectId } = useParams();
   const { data: project, isLoading } = useFetchSpecificProject(
     projectId as string,
   );
+  const {mutate:deleteProjectMutate}=useProjectDelete();
   const { currentUser } = UseAuth()!;
   const isAdmin = currentUser ? currentUser.role === "admin" : false;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -35,7 +39,7 @@ export const ProjectDetails = () => {
   }
 
   return (
-    <> 
+    <>
       <Box
         sx={{
           display: "flex",
@@ -88,8 +92,16 @@ export const ProjectDetails = () => {
               <MenuItem
                 sx={{ color: "error.main" }}
                 onClick={() => {
-                 setAnchorEl(null);
-                 alert('Delete Project');
+                  setAnchorEl(null);
+                  deleteProjectMutate(project.project_id,{
+                    onSuccess:()=>{
+                      toast.success("Project Deleted Successfully");
+                      navigate('/projects')
+                    },
+                    onError:()=>{
+                      toast.error("Project Not Deleted");
+                    }
+                  })
                 }}
               >
                 Delete Project
@@ -98,7 +110,7 @@ export const ProjectDetails = () => {
           </>
         )}
       </Box>
- 
+
       <Box
         sx={{
           display: "flex",
@@ -118,17 +130,22 @@ export const ProjectDetails = () => {
         >
           Add Issue
         </Button>
-      </Box>
-      {issueDialogOpen && <h5>Add New Issue</h5>}
+      </Box> 
 
-      {/* <IssueTable issues={issues} /> */}
-      <IssueDetails />
+      <IssueTable projectId={projectId as string} />
 
       <ProjectForm
         open={editOpen}
         onClose={() => setEditOpen(false)}
         initialData={project}
       />
+      
+      <IssueFormDialog
+        open={issueDialogOpen}
+        onClose={() => setIssueDialogOpen(false)} 
+        projectId={project.project_id}
+      />
     </>
+  
   );
 };

@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import { UseAuth } from "../contexts/AuthContext";
-import ProjectForm from "../components/ProjectForm";
+import ProjectForm from "../dialogs/ProjectForm";
 
 export const Projects = () => {
   const { data, isLoading } = useFetchProjects();
@@ -47,8 +47,8 @@ export const Projects = () => {
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-          gap: 2,
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gap: 2, 
         }}
       >
         {data.map((project: ProjectType) => (

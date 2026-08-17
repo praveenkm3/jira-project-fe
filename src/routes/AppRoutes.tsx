@@ -6,7 +6,8 @@ import { GuestRoute } from "../components/GuestRoute";
 import { Dashboard } from "../pages/Dashboard";
 import { Projects } from "../pages/Projects";
 import { ProjectDetails } from "../components/ProjectDetails";
-
+import { Issues } from "../pages/Issues";
+import IssueDetail from "../pages/IssueDetails";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,8 @@ const router = createBrowserRouter([
       { path: "/dashboard", Component: Dashboard },
       { path: "/projects", Component: Projects },
       { path: "/projects/:projectId", Component: ProjectDetails },
+      {path:'/issues',Component:Issues},
+      {path:'/issues/:issueId',Component:IssueDetail}
     ],
   },
 ]);

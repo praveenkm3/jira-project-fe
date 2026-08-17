@@ -11,7 +11,7 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import PageLoader from "./Loader";
+import PageLoader from "../components/Loader";
 import { useAddProject, useUpdateProject } from "../hooks/project.hooks";
 import { UseAuth } from "../contexts/AuthContext";
 import type { ProjectFormData, ProjectStatus } from "../utils/project.types";
@@ -69,7 +69,6 @@ export default function ProjectForm({
 
   const handleSubmit = () => {
     if (isEditMode && initialData?.project_id) {
-      alert(JSON.stringify(formData))
       updateProject(formData, {
         onSuccess: () => {
           toast.success("Project Updated successfully");

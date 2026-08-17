@@ -3,6 +3,7 @@ export interface registerType {
   email: string;
   password: string;
   role: string;
+  id?:string
 }
 export interface loginType {
   email: string;
