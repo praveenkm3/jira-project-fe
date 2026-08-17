@@ -97,8 +97,11 @@ export const useUpdateIssue = (projectId: string, isAuthor: boolean) => {
     }
   });
 };
-export const useIssueDelete = () => {
+export const useIssueDelete = (projectId:string) => {
   return useMutation({
     mutationFn: deleteIssue,
+    onSuccess: ()=>{
+      queryClient.invalidateQueries({queryKey:["get-project-issues", projectId]})
+    }
   });
 };

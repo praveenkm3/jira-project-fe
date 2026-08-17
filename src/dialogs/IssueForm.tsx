@@ -100,6 +100,10 @@ export default function IssueFormDialog({
       toast.error("Due date is required");
       return;
     }
+    if (!formData.assignee_id) {
+      toast.error("Assigned user is required");
+      return;
+    }
     const payload = { ...formData, due_date: dueDate.format("YYYY-MM-DD") };
     if (issue) {
       updateIssue(
