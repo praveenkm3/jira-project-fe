@@ -14,7 +14,7 @@ export type CurrentuserType = {
   exp?: number;
   iat?: number;
   role?: string;
-  id?: number;
+  id?: number | string; 
 };
 export type notifyType={
   notification_id:string,

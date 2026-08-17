@@ -1,40 +1,153 @@
-import {useGetProjectIssues } from "../hooks/issues.hook";
+import { useGetProjectIssues } from "../hooks/issues.hook";
 import PageLoader from "./Loader";
 import { DataGrid, type GridRowsProp, type GridColDef } from "@mui/x-data-grid";
-
-const columns: GridColDef[] = [
-  { field: "issue_title", headerName: "Issue Title",width:300 },
-  { field: "issue_number", headerName: "Number"},
-  { field: "issue_description", headerName: "Description",width:300 },
-  { field: "issue_type", headerName: "Type" },
-  { field: "issue_priority", headerName: "Priority" },
-  { field: "issue_status", headerName: "Status" },
-  { field: "reporter", headerName: "Creator",width:200},
-  { field: "assignee", headerName: "Assignee",width:200 },
-];
+import { useNavigate } from "react-router";
+import EditIcon from "@mui/icons-material/EditOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import type { IssueType } from "../utils/issue.types";
+import { Box, Button } from "@mui/material";
+import { UseAuth } from "../contexts/AuthContext";
+import IssueFormDialog from "../dialogs/IssueForm";
+import { useState } from "react";
+import dayjs from "dayjs";
 
-export const IssueTable = ({projectId}:{projectId:string}) => {
+export const IssueTable = ({ projectId }: { projectId: string }) => {
+  const { currentUser } = UseAuth()!;
+  const navigate = useNavigate();
+  const [editIssue, setEditIssue] = useState<IssueType | null>(null);
+  const columns: GridColDef[] = [
+    { field: "issue_title", headerName: "Issue Title", flex: 1, minWidth: 150 },
+    { field: "issue_number", headerName: "Number", flex: 0.5, minWidth: 80 },
+    {
+      field: "issue_description",
+      headerName: "Description",
+      flex: 1.5,
+      minWidth: 200,
+    },
+    { field: "issue_type", headerName: "Type", flex: 0.7, minWidth: 100 },
+    {
+      field: "issue_priority",
+      headerName: "Priority",
+      flex: 0.7,
+      minWidth: 100,
+    },
+    { field: "issue_status", headerName: "Status", flex: 0.7, minWidth: 100 },
+    { field: "reporter", headerName: "Creator", flex: 1, minWidth: 150 },
+    { field: "assignee", headerName: "Assignee", flex: 1, minWidth: 150 },
+    { field: "issue_due_date", headerName: "Due Date", flex: 1, minWidth: 150,renderCell(params) {
+      return dayjs(params.row.issue_due_date).format("DD MMM YYYY")
+    }, },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      maxWidth: 150,
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+              gap: 0.5,
+            }}
+          >
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{
+                minWidth: 32,
+                width: 32,
+                height: 32,
+                padding: 0,
+              }}
+              onClick={() => navigate(`/issues/${params.row.id}`)}
+            >
+              <VisibilityIcon />
+            </Button>
+
+            {currentUser?.id === params.row.reporter_id && (
+              <>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  sx={{
+                    minWidth: 32,
+                    width: 32,
+                    height: 32,
+                    padding: 0,
+                    color: "black",
+                    border: 0.5,
+                  }}
+                  onClick={() => setEditIssue(params.row.originalIssue)}
+                >
+                  <EditIcon />
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="small"
+                  sx={{
+                    minWidth: 32,
+                    width: 32,
+                    height: 32,
+                    padding: 0,
+                  }}
+                  // onClick={() => handleDelete(params.row)}
+                >
+                  <DeleteIcon />
+                </Button>
+              </>
+            )}
+          </Box>
+        );
+      },
+    },
+  ];
+
   const { data, isLoading } = useGetProjectIssues(projectId);
-  const rows :GridRowsProp[]= data?.map((issue: IssueType) => ({
+  const rows: GridRowsProp[] = data?.map((issue: IssueType) => ({
     id: issue.issue_id,
     issue_title: issue.issue_title,
-    issue_number:issue.issue_number,
+    issue_number: issue.issue_number,
     issue_description: issue.issue_description,
     issue_type: issue.issue_type,
-    issue_priority: issue.issue_priority, 
+    issue_priority: issue.issue_priority,
     issue_status: issue.issue_status,
     reporter: issue.reporter.email,
+    reporter_id: issue.reporter.id,
     assignee: issue.assignee?.email,
+    issue_due_date: issue.issue_due_date,
+    originalIssue: issue,
   }));
   if (isLoading) {
     return <PageLoader />;
   }
   return (
     <>
-      <div style={{ height: 300, width: "100%" }}>
-        <DataGrid rows={rows} columns={columns} />
-      </div>
+      <Box style={{ height: 700, width: "100%" }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          sx={{
+            width: "100%",
+            height: "100%",
+          }}
+        />
+        <IssueFormDialog
+          projectId={projectId}
+          issue={editIssue}
+          onClose={() => setEditIssue(null)}
+          open={editIssue !== null}
+        />
+      </Box>
     </>
   );
 };

@@ -16,7 +16,7 @@ import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import type { layoutProp } from "../utils/use.types";
 import Navbar from "./Navbar";
 import { useNavigate, useLocation } from "react-router";
-
+import { UseAuth } from "../contexts/AuthContext";
 const drawerWidth = 260;
 
 const mainNav = [
@@ -25,30 +25,39 @@ const mainNav = [
     label: "Dashboard",
     icon: DashboardOutlinedIcon,
     path: "/dashboard",
+    roles: ["admin", "developer"],
   },
   {
     id: "projects",
     label: "Projects",
     icon: FolderOutlinedIcon,
     path: "/projects",
+    roles: ["admin", "developer"],
   },
   {
     id: "issues",
     label: "Issues",
     icon: BugReportOutlinedIcon,
     path: "/issues",
+    roles: ["developer"],
   },
   {
     id: "members",
     label: "Members",
     icon: GroupOutlinedIcon,
     path: "/members",
+    roles: ["admin", "developer"],
   },
 ];
 
 export default function Sidebar({ children }: layoutProp) {
+  const {currentUser}=UseAuth()!;
+  const role=currentUser?.role;
   const navigate = useNavigate();
   const location = useLocation();
+  const navList = mainNav.filter((item) =>
+    item.roles.includes(role ?? "")
+  );
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -109,7 +118,7 @@ export default function Sidebar({ children }: layoutProp) {
           </Typography>
 
           <List sx={{ py: 0 }}>
-            {mainNav.map(({ id, label, icon: Icon, path }) => {
+            {navList.map(({ id, label, icon: Icon, path }) => {
               const isActive = location.pathname.startsWith(path);
               return (
                 <ListItem key={id} disablePadding sx={{ mb: 0.25 }}>

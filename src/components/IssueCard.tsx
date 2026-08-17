@@ -1,15 +1,8 @@
-import { Avatar, Box, Chip, Typography } from "@mui/material";
+import { Avatar, Box, Chip, MenuItem, Select, Typography } from "@mui/material";
 import highIcon from "../../public/highPriority.png";
 import mediumIcon from "../../public/equal.svg";
 import lowIcon from "../../public/down.png";
-interface IssueCardProps {
-  title: string;
-  typeText: string;
-  statusText: string;
-  priorityText: string;
-  reporter_email: string;
-  onClick?: () => void;
-}
+import type { IssueCardProps } from "../utils/issue.types";
 
 const stringToColor = (str: string) => {
   let hash = 0;
@@ -26,9 +19,12 @@ export default function IssueCard({
   priorityText,
   reporter_email,
   onClick,
+  issue_id,
+  onStatusChange
 }: IssueCardProps) {
   return (
     <Box
+      key={issue_id}
       onClick={onClick}
       sx={{
         p: 2,
@@ -37,7 +33,7 @@ export default function IssueCard({
         borderRadius: 2,
         bgcolor: "#fff",
         cursor: onClick ? "pointer" : "default",
-        boxShadow:10
+        boxShadow: 10,
       }}
     >
       <Typography
@@ -72,29 +68,32 @@ export default function IssueCard({
           justifyContent: "space-between",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-          <Chip
-            label={statusText}
-            variant="outlined"
-            size="small"
-            sx={{
-              color:
-                statusText === "Open"
-                  ? "#3B82F6"
-                  : statusText === "In Progress"
-                    ? "#F59E0B"
-                    : statusText === "Done"
-                      ? "#22C55E"
-                      : "#6B7280",
-              fontWeight: 600,
-              fontSize: 11,
-              height: 22,
-              borderRadius: "6px",
-              mb: 1.5,
-            }}
-          />
-        </Box>
-
+        <Select
+          value={statusText}
+          size="small"
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => {
+            e.stopPropagation();
+            onStatusChange?.(issue_id, e.target.value);
+          }}
+          sx={{
+            height: 28,
+            fontSize: 11,
+            fontWeight: 600,
+            color:
+              statusText === "Open"
+                ? "#3B82F6"
+                : statusText === "In Progress"
+                  ? "#F59E0B"
+                  : statusText === "Done"
+                    ? "#22C55E"
+                    : "#6B7280",
+          }}
+        >
+          <MenuItem value="Open">Open</MenuItem>
+          <MenuItem value="In Progress">In Progress</MenuItem>
+          <MenuItem value="Done">Done</MenuItem>
+        </Select>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             <Box

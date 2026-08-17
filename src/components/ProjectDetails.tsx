@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { useFetchSpecificProject } from "../hooks/project.hooks";
+import { useFetchSpecificProject, useProjectDelete } from "../hooks/project.hooks";
 import PageLoader from "./Loader";
 import {
   Box,
@@ -17,14 +17,17 @@ import AddIcon from "@mui/icons-material/Add";
 import ProjectForm from "../dialogs/ProjectForm";
 import { IssueTable } from "./IssueTable";
 import IssueFormDialog from "../dialogs/IssueForm"; 
-
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 
 export const ProjectDetails = () => {
+  const navigate=useNavigate();
   const { projectId } = useParams();
   const { data: project, isLoading } = useFetchSpecificProject(
     projectId as string,
   );
+  const {mutate:deleteProjectMutate}=useProjectDelete();
   const { currentUser } = UseAuth()!;
   const isAdmin = currentUser ? currentUser.role === "admin" : false;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -90,7 +93,15 @@ export const ProjectDetails = () => {
                 sx={{ color: "error.main" }}
                 onClick={() => {
                   setAnchorEl(null);
-                  alert("Delete Project");
+                  deleteProjectMutate(project.project_id,{
+                    onSuccess:()=>{
+                      toast.success("Project Deleted Successfully");
+                      navigate('/projects')
+                    },
+                    onError:()=>{
+                      toast.error("Project Not Deleted");
+                    }
+                  })
                 }}
               >
                 Delete Project

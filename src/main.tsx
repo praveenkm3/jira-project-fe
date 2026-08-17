@@ -21,7 +21,7 @@ root.render(
       <AuthProvider>
         <RouterProvider router={router} />
         <App/>
-        <ToastContainer position="top-right" autoClose={3000} theme="dark" />
+        <ToastContainer position="top-right" autoClose={800} theme="dark" />
       </AuthProvider>
       </LocalizationProvider>
     </QueryClientProvider>
