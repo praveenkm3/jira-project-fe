@@ -1,4 +1,4 @@
- import { useMutation ,useQuery} from "@tanstack/react-query"; 
+import { useMutation ,useQuery} from "@tanstack/react-query"; 
 import queryClient from "./queryClient";
 import {updateComment,deleteComment, fetchComments, addComment} from "../api/comments.api";
 import type{ commentUpdateType } from "../utils/comments.types";

@@ -11,11 +11,13 @@ import { UseAuth } from "../contexts/AuthContext";
 import IssueFormDialog from "../dialogs/IssueForm";
 import { useState } from "react";
 import dayjs from "dayjs";
+import { IssueDeleteDialog } from "../dialogs/IssueDeleteDialog";
 
 export const IssueTable = ({ projectId }: { projectId: string }) => {
   const { currentUser } = UseAuth()!;
   const navigate = useNavigate();
   const [editIssue, setEditIssue] = useState<IssueType | null>(null);
+  const [deleteIssue, setDeleteIssue] = useState<IssueType | null>(null);
   const columns: GridColDef[] = [
     { field: "issue_title", headerName: "Issue Title", flex: 1, minWidth: 150 },
     { field: "issue_number", headerName: "Number", flex: 0.5, minWidth: 80 },
@@ -35,9 +37,15 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
     { field: "issue_status", headerName: "Status", flex: 0.7, minWidth: 100 },
     { field: "reporter", headerName: "Creator", flex: 1, minWidth: 150 },
     { field: "assignee", headerName: "Assignee", flex: 1, minWidth: 150 },
-    { field: "issue_due_date", headerName: "Due Date", flex: 1, minWidth: 150,renderCell(params) {
-      return dayjs(params.row.issue_due_date).format("DD MMM YYYY")
-    }, },
+    {
+      field: "issue_due_date",
+      headerName: "Due Date",
+      flex: 1,
+      minWidth: 150,
+      renderCell(params) {
+        return dayjs(params.row.issue_due_date).format("DD MMM YYYY");
+      },
+    },
     {
       field: "action",
       headerName: "Action",
@@ -100,7 +108,7 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
                     height: 32,
                     padding: 0,
                   }}
-                  // onClick={() => handleDelete(params.row)}
+                  onClick={() => setDeleteIssue(params.row)}
                 >
                   <DeleteIcon />
                 </Button>
@@ -126,6 +134,7 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
     assignee: issue.assignee?.email,
     issue_due_date: issue.issue_due_date,
     originalIssue: issue,
+    issue_id: issue.issue_id,
   }));
   if (isLoading) {
     return <PageLoader />;
@@ -146,6 +155,13 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
           issue={editIssue}
           onClose={() => setEditIssue(null)}
           open={editIssue !== null}
+        />
+        <IssueDeleteDialog
+          onClose={() => setDeleteIssue(null)}
+          selectedValue={deleteIssue?.issue_title as string}
+          open={deleteIssue !== null}
+          issueId={deleteIssue?.issue_id as string}
+          projectId={projectId}
         />
       </Box>
     </>

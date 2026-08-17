@@ -90,3 +90,10 @@ export interface IssueFormDialogProps {
   projectId: string;
   issue?: IssueType | null;
 }
+export interface IssueDeleteDialogProps {
+  open: boolean;
+  selectedValue: string;  
+  issueId: string; 
+  onClose: () => void;
+  projectId:string
+}

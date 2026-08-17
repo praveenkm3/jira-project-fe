@@ -1,44 +1,18 @@
-import Popover from "@mui/material/Popover";
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material"
+import { Box } from "@mui/system"
+import PageLoader from "../components/Loader"
+import type { notifyType } from "../utils/use.types"
+import { getCurrentHours } from "../algorithms/strings_operations"
 import { useGetNotifications } from "../hooks/notify.hooks";
-import PageLoader from "./Loader";
-import type { notifyType } from "../utils/use.types";
-import { getCurrentHours } from "../algorithms/strings_operations";
-
-export default function Notifications({
-  anchorEl,
-  onClose,
-}: {
-  anchorEl: HTMLElement | null;
-  onClose: () => void;
-}) {
-  const { data, isLoading } = useGetNotifications();
-  const open = Boolean(anchorEl);
 
 
-  return (
-    <Popover
-      open={open}
-      anchorEl={anchorEl}
-      onClose={onClose}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
-      slotProps={{
-        paper: {
-          sx: {
-            width: 500,
-            maxHeight: 420,
-            mt: 1,
-            borderRadius: 2,
-            border: "1px solid #E5E7EB",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-          },
-        },
-      }}
-    >
-      <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #E5E7EB" }}>
+export const RecentOverview=()=>{
+    const { data, isLoading } = useGetNotifications();
+    return (
+        <>
+        <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid #E5E7EB" }}>
         <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-          Recent Notifications
+          Recent Activity
         </Typography>
       </Box>
 
@@ -79,10 +53,9 @@ export default function Notifications({
           ))
         ) : (
           <Typography sx={{ fontSize: 13, color: "#9CA3AF", textAlign: "center", py: 2 }}>
-            No notifications yet.
+            No Activity yet.
           </Typography>
         )}
-      </Box>
-    </Popover>
-  );
+      </Box></>
+    )
 }
