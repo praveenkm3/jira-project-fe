@@ -7,15 +7,17 @@ import {
   getFetchIssueById,
   updateIssueStatus,
   updateIssue,
-  deleteIssue,
+  deleteIssue, 
 } from "../api/issues.api";
 import type { IssueFormData } from "../utils/issue.types";
 import queryClient from "./queryClient";
 
-export const useGetIssues = () => {
+export const useGetIssues = (search:string) => {
   return useQuery({
-    queryKey: ["get-issues"],
-    queryFn: fetchIssues,
+    queryKey: ["get-issues",search],
+    queryFn: async ()=>{
+      return fetchIssues(search);
+    },
   });
 };
 

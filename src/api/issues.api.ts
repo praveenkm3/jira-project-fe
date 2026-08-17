@@ -3,9 +3,16 @@ import type{ IssueFormData } from "../utils/issue.types";
 
 
 
-export async function fetchIssues(){
-    const response=await api.get('/api/issues/');
-    return response.data;
+export async function fetchIssues(search:string){
+    let response;
+    if(search){
+        response=await api.get(`/api/issues/`);
+        return response.data;
+
+    }else{
+        response=await api.get(`/api/issues/get/${search}`);
+        return response.data;
+    }
 }
 
 export async function fetchProjectIssues(projectId:string){

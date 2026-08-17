@@ -11,14 +11,18 @@ import { useUpdateIssueStatus } from "../hooks/issues.hook";
 
 export const Issues = () => {
   const navigate = useNavigate();
-  const { data, isLoading } = useGetIssues();
+  const [searchValue, setSearchValue] = useState<string>("");
+  const { data, isLoading } = useGetIssues(searchValue);
   const [search, setSearch] = useState<string>("");
   const { mutate: changeTaskStatus } = useUpdateIssueStatus();
   function handleSearch(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
   ) {
     setSearch(e.target.value);
-    console.log(search);
+  }
+  function sumbitSearch() {
+    setSearchValue(search);
+    setSearch("");
   }
   if (isLoading) {
     return <PageLoader />;
@@ -48,7 +52,9 @@ export const Issues = () => {
             sx={{ fontSize: 14, flex: 1 }}
             onChange={handleSearch}
           />
-          <Button variant="outlined">Search</Button>
+          <Button variant="outlined" onClick={sumbitSearch}>
+            Search
+          </Button>
         </Box>
       </Box>
       <Box sx={{ display: "flex", gap: 3 }}>
@@ -69,7 +75,7 @@ export const Issues = () => {
                 onClick={() => {
                   navigate(`/issues/${item.issue_id}`);
                 }}
-                onStatusChange={(issueId:string, newStatus:string) => {
+                onStatusChange={(issueId: string, newStatus: string) => {
                   changeTaskStatus({
                     issueId: issueId,
                     status: newStatus,
@@ -96,7 +102,7 @@ export const Issues = () => {
                 onClick={() => {
                   navigate(`/issues/${item.issue_id}`);
                 }}
-                onStatusChange={(issueId:string, newStatus:string) => {
+                onStatusChange={(issueId: string, newStatus: string) => {
                   changeTaskStatus({
                     issueId: issueId,
                     status: newStatus,
@@ -123,7 +129,7 @@ export const Issues = () => {
                 onClick={() => {
                   navigate(`/issues/${item.issue_id}`);
                 }}
-                onStatusChange={(issueId:string, newStatus:string) => {
+                onStatusChange={(issueId: string, newStatus: string) => {
                   changeTaskStatus({
                     issueId: issueId,
                     status: newStatus,

@@ -18,19 +18,11 @@ import EditMembers from "../dialogs/EditMembers";
 import { initials } from "../algorithms/strings_operations";
 
 
-const statusColors: Record<
-  ProjectType["project_status"],
-  { bg: string; text: string }
-> = {
-  ACTIVE: { bg: "rgba(34,197,94,0.12)", text: "#15803D" },
-  COMPLETED: { bg: "rgba(99,102,241,0.12)", text: "#4338CA" },
-};
 
 export default function ProjectCard({ project }: { project: ProjectType }) {
   const navigate = useNavigate();
   const { currentUser } = UseAuth()!;
   const isAdmin = currentUser ? currentUser.role === "admin" : false;
-  const status = statusColors[project.project_status] ?? statusColors.ACTIVE;
   const [manageMembersOpen, setManageMembersOpen] = useState(false);
   const [addMembersOpen, setAddMembersOpen] = useState(false);
   const existedMembers = project.members.map((m) => m.user.id) as string[];
@@ -40,8 +32,7 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
       variant="outlined"
       sx={{
         borderRadius: "12px",
-        borderColor: "#EAEAEC",
-        transition: "border-color 120ms ease, box-shadow 120ms ease",
+        borderColor: "#EAEAEC", 
         boxShadow: 10,
         minHeight: 200,
         display: "flex",
@@ -78,11 +69,12 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
           </Box>
 
           <Chip
-            label={project.project_status.replace("_", " ")}
+            label={project.project_status}
             size="small"
             sx={{
-              bgcolor: status.bg,
-              color: status.text,
+              
+              bgcolor: project.project_status==='ACTIVE' ? "rgba(34,197,94,0.12)" :"rgba(99,102,241,0.12)",
+              color:project.project_status==='ACTIVE'? "#15803D" :  "#4338CA",
               fontWeight: 600,
               fontSize: 11,
               height: 22,
@@ -144,23 +136,21 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
 
       {isAdmin && (
         <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-          
-           
           <Button
-          startIcon={<EditOutlinedIcon fontSize="small" />}
-          onClick={(e) => {
-            e.stopPropagation();
-            setManageMembersOpen(true);
-          }}
-          sx={{
-            textTransform: "none",
-            fontSize: 13,
-            fontWeight: 600,
-            py: 1.25,
-          }}
-        >
-          Remove Members
-        </Button>
+            startIcon={<EditOutlinedIcon fontSize="small" />}
+            onClick={(e) => {
+              e.stopPropagation();
+              setManageMembersOpen(true);
+            }}
+            sx={{
+              textTransform: "none",
+              fontSize: 13,
+              fontWeight: 600,
+              py: 1.25,
+            }}
+          >
+            Remove Members
+          </Button>
           <Button
             startIcon={<PersonAddIcon fontSize="small" />}
             onClick={(e) => {
@@ -186,7 +176,6 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
         projectId={project.project_id}
         existingMemberIds={existedMembers}
       />
-
 
       <EditMembers
         open={manageMembersOpen}
