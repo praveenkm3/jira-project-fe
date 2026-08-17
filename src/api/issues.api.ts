@@ -5,7 +5,7 @@ import type{ IssueFormData } from "../utils/issue.types";
 
 export async function fetchIssues(search:string){
     let response;
-    if(search){
+    if(!search){
         response=await api.get(`/api/issues/`);
         return response.data;
 

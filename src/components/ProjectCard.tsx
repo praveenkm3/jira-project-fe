@@ -7,13 +7,13 @@ import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
-import PersonAddIcon from "@mui/icons-material/PersonAddOutlined";
+import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import type { ProjectType } from "../utils/project.types";
 import { UseAuth } from "../contexts/AuthContext";
 import AddMembers from "../dialogs/AddMembers";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import PersonRemoveAlt1OutlinedIcon from '@mui/icons-material/PersonRemoveAlt1Outlined';
 import EditMembers from "../dialogs/EditMembers";
 import { initials } from "../algorithms/strings_operations";
 
@@ -137,7 +137,7 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
       {isAdmin && (
         <Box sx={{ display: "flex", justifyContent: "space-around" }}>
           <Button
-            startIcon={<EditOutlinedIcon fontSize="small" />}
+            startIcon={<PersonRemoveAlt1OutlinedIcon fontSize="small" />}
             onClick={(e) => {
               e.stopPropagation();
               setManageMembersOpen(true);
@@ -152,7 +152,7 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
             Remove Members
           </Button>
           <Button
-            startIcon={<PersonAddIcon fontSize="small" />}
+            startIcon={<PersonAddAlt1OutlinedIcon fontSize="small" />}
             onClick={(e) => {
               e.stopPropagation();
               setAddMembersOpen(true);

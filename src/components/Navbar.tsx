@@ -7,50 +7,29 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Divider from "@mui/material/Divider";
-import Tooltip from "@mui/material/Tooltip";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import jiraSvg from "../../public/jira_logo.svg";
-import { useLogout } from "../hooks/auth.hooks";
+import Tooltip from "@mui/material/Tooltip"; 
+import jiraSvg from "../../public/jira_logo.svg"; 
 import { useNavigate } from "react-router";
-import { UseAuth } from "../contexts/AuthContext";
-import { toast } from "react-toastify";
+import { UseAuth } from "../contexts/AuthContext"; 
 import Notifications from "./Notifications";
 import NotificationsIcon from "@mui/icons-material/NotificationsOutlined";
 import { useGetMyProjectForSearch } from "../hooks/project.hooks";
 import { find_prefix_matches } from "../algorithms/binary_search";
-import type { ProjectSearchType } from "../utils/project.types";
+import type { ProjectSearchType } from "../utils/project.types"; 
+import { Profile } from "./Profile";
 
-export default function Navbar() {
-  const { mutate } = useLogout();
+export default function Navbar() { 
   const navigate = useNavigate();
   const { data } = useGetMyProjectForSearch();
-  const { removeUser, currentUser } = UseAuth()!;
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => setAnchorEl(null);
+  const { currentUser } = UseAuth()!; 
+ console.log(currentUser)
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
+    null,
+  );
   const [search, setSearch] = useState<string>("");
   const matchedresult = find_prefix_matches(search, data ?? []);
-  const handleLogout = () => {
-    mutate(undefined, {
-      onSuccess: () => {
-        removeUser();
-        toast.success("Logout Success");
-        navigate("/login");
-      },
-      onError: () => {
-        toast.success("Logout Not Success");
-      },
-    });
-  };
+   
 
   return (
     <Toolbar sx={{ gap: 1.5 }}>
@@ -143,8 +122,8 @@ export default function Navbar() {
         anchorEl={notifAnchorEl}
         onClose={() => setNotifAnchorEl(null)}
       />
-      <Tooltip title="Account">
-        <IconButton onClick={handleOpen} sx={{ p: 0, ml: 0.5 }}>
+      <Tooltip title="Account" > 
+        <IconButton onClick={(e)=>setProfileAnchorEl(e.currentTarget)} sx={{ p: 0, ml: 0.5 }}>
           <Avatar
             sx={{ width: 34, height: 34, fontSize: 13, bgcolor: "#6366F1" }}
           >
@@ -152,35 +131,11 @@ export default function Navbar() {
           </Avatar>
         </IconButton>
       </Tooltip>
+      <Profile
+            anchorEl={profileAnchorEl}
+            onClose={() => setProfileAnchorEl(null)}
+          />
 
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        slotProps={{ paper: { sx: { width: 220, mt: 1 } } }}
-      >
-        <Box sx={{ px: 2, py: 1.5 }}>
-          <Typography sx={{ fontSize: 14, fontWeight: 600 }} noWrap>
-            {currentUser?.email}
-          </Typography>
-        </Box>
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonOutlineOutlinedIcon fontSize="small" />
-          </ListItemIcon>
-          Profile
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleLogout}>
-          <ListItemIcon>
-            <LogoutOutlinedIcon fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
-      </Menu>
     </Toolbar>
   );
 }

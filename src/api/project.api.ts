@@ -44,3 +44,8 @@ export async function getMyProjectForSearch(){
     const response=await api.get(`/api/project/my-projects`);
     return response.data;
 }
+export async function getSpecificProjectMembers(projectId:string){
+    const response=await api.get(`/api/project/by/${projectId}/members`);
+    return response.data;
+}
+

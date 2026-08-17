@@ -1,6 +1,6 @@
 import { api } from "./axios_client";
 import type{ loginType ,registerType} from "../utils/auth.types";
-import type { UserContextType } from "../utils/use.types";
+import type {  UserOption } from "../utils/use.types";
 
 
 export async function login(body:loginType){
@@ -15,11 +15,15 @@ export async function register(body:registerType){
 }
 
 
-export async function profile():Promise<UserContextType | null>{
-    const response=await api.get('/users/me');
+export async function profile():Promise<UserOption>{
+    const response=await api.get('/api/users/me');
     return response.data;
 }
 export async function logout(){
     const response=await api.post('/auth/logout');
+    return response.data;
+}
+export async function fetchUsers() {
+    const response=await api.get('/api/users');
     return response.data;
 }

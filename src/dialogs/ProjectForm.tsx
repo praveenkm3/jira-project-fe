@@ -61,9 +61,7 @@ export default function ProjectForm({
     }
   }, [open, initialData]);
 
-  const handleChange =
-    (field: keyof ProjectFormData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange =(field: keyof ProjectFormData) =>(e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData((prev) => ({ ...prev, [field]: e.target.value }));
     };
 
@@ -77,6 +75,16 @@ export default function ProjectForm({
         onError: () => toast.error("Project not updated"),
       });
     } else {
+      const projectName=formData.project_name.trim();
+      const projectKey=formData.project_key.trim();
+      if(!projectName){
+        toast.error("Project Name is required")
+        return 
+      }
+      if(!projectKey){
+        toast.error("Project Key is required")
+        return 
+      }
       addProject(formData, {
         onSuccess: () => {
           toast.success("Project created successfully");

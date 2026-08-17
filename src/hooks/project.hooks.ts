@@ -10,7 +10,8 @@ import {
   removeProjectMember,
   updateProjectMembers,
   deleteProject,
-  getMyProjectForSearch
+  getMyProjectForSearch,
+  getSpecificProjectMembers
 } from "../api/project.api";
 import type { ProjectFormData } from "../utils/project.types";
 
@@ -115,5 +116,14 @@ export const useGetMyProjectForSearch = () => {
   return useQuery({
     queryKey: ["my-project-search"],
     queryFn:getMyProjectForSearch
+  });
+};
+export const useGetSpecificProjectMembers = (projectId:string) => {
+  return useQuery({
+    queryKey: ["get-specifc-project-members",projectId],
+    queryFn:async ()=>{
+      const result=await getSpecificProjectMembers(projectId);
+      return result;
+    }
   });
 };
