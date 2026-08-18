@@ -26,6 +26,7 @@ export type notifyType={
 export interface UserOption {
   id: string;
   name: string;
+  status: string;
   email: string;
   role: "admin" | "developer";
   joinedat?:string

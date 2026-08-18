@@ -50,6 +50,7 @@ export const BarChartPriority = () => {
             data: priorityCounts,
             label: "Issue Priority",
             barLabel: "value",
+            color:"none"
           },
         ]}
         height={250}

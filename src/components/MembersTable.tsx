@@ -7,7 +7,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import type{ UserOption } from '../utils/use.types';
 import dayjs from "dayjs";
-
+import { toTitleCase } from '../algorithms/strings_operations';
 
 export default function MembersTable({rows}:{rows:UserOption[]}) {
   return (
@@ -16,22 +16,22 @@ export default function MembersTable({rows}:{rows:UserOption[]}) {
         <TableHead >
           <TableRow sx={{bgcolor:"black"}}>
             <TableCell sx={{color:"white"}}>Email</TableCell>
-            <TableCell sx={{color:"white"}} align="right">User Name</TableCell>
-            <TableCell sx={{color:"white"}} align="right">Role</TableCell>
-            <TableCell sx={{color:"white"}} align="right">Is Active</TableCell>
-            <TableCell sx={{color:"white"}} align="right">Joined At</TableCell>
+            <TableCell sx={{color:"white"}} align="left">User Name</TableCell>
+            <TableCell sx={{color:"white"}} align="left">Role</TableCell>
+            <TableCell sx={{color:"white"}} align="left">Is Active</TableCell>
+            <TableCell sx={{color:"white"}} align="left">Joined At</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row:UserOption) => (
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">
-                {row.name}
+                {toTitleCase(row.email)}
               </TableCell>
-              <TableCell align="right">{row.email}</TableCell>
-              <TableCell align="right">{row.name}</TableCell>
-              <TableCell align="right">{row.role}</TableCell>
-              <TableCell align="right">{dayjs(row.joinedat).format("DD MMM YYYY")}</TableCell>
+              <TableCell align="left">{toTitleCase(row.name)}</TableCell>
+              <TableCell align="left">{toTitleCase(row.role)}</TableCell>
+              <TableCell align="left">{toTitleCase(row.status)}</TableCell>
+              <TableCell align="left">{dayjs(row.joinedat).format("DD MMM YYYY")}</TableCell>
             </TableRow>
           ))}
         </TableBody>

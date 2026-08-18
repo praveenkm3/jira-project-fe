@@ -24,7 +24,7 @@ export const Profile = ({
   const { removeUser } = UseAuth()!;
   const navigate = useNavigate();
   const { data: profileData, isLoading } = useGetProfile();
-  console.log(profileData);
+  // console.log(profileData);
   const open = Boolean(anchorEl);
   const handleLogout = () => {
     mutate(undefined, {

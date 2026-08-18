@@ -175,7 +175,7 @@ export default function IssueFormDialog({
             >
               {STATUS_OPTIONS.map((status) => (
                 <MenuItem key={status} value={status}>
-                  {status.replace("_", " ")}
+                  {status}
                 </MenuItem>
               ))}
             </TextField>

@@ -54,8 +54,8 @@ export const BarChartType = () => {
         series={[
           {
             data: typeCounts,
-            label: "Issue Types",
-            color: "#f1e363",
+            label: "Issue Types", 
+            color:"none"
           },
         ]}
         height={250}

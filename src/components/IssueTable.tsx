@@ -1,17 +1,22 @@
-import { useGetProjectIssues } from "../hooks/issues.hook";
-import PageLoader from "./Loader";
-import { DataGrid, type GridRowsProp, type GridColDef } from "@mui/x-data-grid";
-import { useNavigate } from "react-router";
-import EditIcon from "@mui/icons-material/EditOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/EditOutlined";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import type { IssueType } from "../utils/issue.types";
 import { Box, Button } from "@mui/material";
-import { UseAuth } from "../contexts/AuthContext";
-import IssueFormDialog from "../dialogs/IssueForm";
-import { useState } from "react";
+import {
+  DataGrid,
+  type GridColDef,
+  type GridFilterModel,
+  type GridRowsProp,
+} from "@mui/x-data-grid";
 import dayjs from "dayjs";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { UseAuth } from "../contexts/AuthContext";
 import { IssueDeleteDialog } from "../dialogs/IssueDeleteDialog";
+import IssueFormDialog from "../dialogs/IssueForm";
+import { useGetProjectIssues } from "../hooks/issues.hook";
+import type { IssueType } from "../utils/issue.types";
+import PageLoader from "./Loader";
 
 export const IssueTable = ({ projectId }: { projectId: string }) => {
   const { currentUser } = UseAuth()!;
@@ -119,9 +124,40 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
       },
     },
   ];
+  const [filterDataSend, setFilterDataSend] = useState({
+    field: "",
+    value: "",
+  });
+  const [filterData, setFilterData] = useState({
+    field: "",
+    value: "",
+  });
 
-  const { data, isLoading } = useGetProjectIssues(projectId);
-  const rows: GridRowsProp[] = data?.map((issue: IssueType) => ({
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const field=filterData.field.trim();
+      const value=filterData.value.trim();
+      setFilterDataSend({field,value});
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [filterData]);
+  const handleFilter = (e: GridFilterModel) => {
+    setFilterData({ field: e.items[0].field.trim(), value: e.items[0].value ?? "" });
+    // console.log(e.items[0].field);
+    // console.log(e.items[0].value);
+  };
+  const { data, isLoading } = useGetProjectIssues(
+    projectId,
+    paginationModel.page,
+    paginationModel.pageSize,
+    filterDataSend.field,
+    filterDataSend.value,
+  );
+  const rows: GridRowsProp[] = data?.result?.map((issue: IssueType) => ({
     id: issue.issue_id,
     issue_title: issue.issue_title,
     issue_number: issue.issue_number,
@@ -143,11 +179,32 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
     <>
       <Box style={{ height: 700, width: "100%" }}>
         <DataGrid
-          rows={rows}
+          rows={rows ?? []}
           columns={columns}
           sx={{
             width: "100%",
             height: "100%",
+          }}
+          getRowId={(row) => row.issue_id}
+          paginationMode="server"
+          filterMode="server"
+          onFilterModelChange={handleFilter}
+          onPaginationModelChange={setPaginationModel}
+          rowCount={data?.totalRecords ?? 0}
+          pageSizeOptions={[1, 5, 10, 25, 50]}
+          paginationModel={{
+            page: paginationModel.page,
+            pageSize: paginationModel.pageSize,
+          }}
+          slotProps={{
+            filterPanel: {
+              disableAddFilterButton: true,
+              filterFormProps: {
+                operatorInputProps: {
+                  sx: { display: "none" },
+                },
+              },
+            },
           }}
         />
         <IssueFormDialog

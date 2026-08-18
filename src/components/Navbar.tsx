@@ -22,7 +22,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { data } = useGetMyProjectForSearch();
   const { currentUser } = UseAuth()!; 
- console.log(currentUser)
+//  console.log(currentUser)
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
     null,

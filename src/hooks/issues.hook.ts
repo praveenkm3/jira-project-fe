@@ -21,11 +21,11 @@ export const useGetIssues = (search:string) => {
   });
 };
 
-export const useGetProjectIssues = (projectId: string) => {
+export const useGetProjectIssues = (projectId: string,pageNumber:number,pageRecords:number,field:string,value:string) => {
   return useQuery({
-    queryKey: ["get-project-issues", projectId],
+    queryKey: ["get-project-issues", projectId,pageNumber,pageRecords,field,value],
     queryFn: async () => {
-      const response = await fetchProjectIssues(projectId);
+      const response = await fetchProjectIssues(projectId,pageNumber,pageRecords,field,value);
       return response;
     },
   });
@@ -50,6 +50,7 @@ export const useGetProjectMembers = (prjectId: string) => {
       const response = await fetchProjectMembers(prjectId);
       return response;
     },
+    staleTime:2*60*1000,
     enabled: !!prjectId,
   });
 };
