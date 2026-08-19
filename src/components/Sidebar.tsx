@@ -55,9 +55,9 @@ export default function Sidebar({ children }: layoutProp) {
   const role=currentUser?.role;
   const navigate = useNavigate();
   const location = useLocation();
-  const navList = mainNav.filter((item) =>
+  const navList = role=='admin' ? mainNav.filter((item) =>
     item.roles.includes(role ?? "")
-  );
+  ) : mainNav
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />

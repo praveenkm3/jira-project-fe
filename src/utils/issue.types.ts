@@ -1,6 +1,7 @@
 export interface IssueUser {
   id: string;
   email: string;
+  name: string;
 }
 
 export interface IssueType {
@@ -10,28 +11,30 @@ export interface IssueType {
   issue_description: string;
   issue_type: string;
   issue_priority: string;
-  issue_status: string;
   assignee: IssueUser | null;
   reporter: IssueUser;
   issue_due_date: string;
   createdAt: string;
   updatedAt: string;
+  issue_status: {
+    status_id: string;
+    status_name: string;
+  };
 }
 
 export type IssuesResponse = IssueType[];
 
-export type IssueStatus = "Open" | "In Progress" | "Done";
 export type IssuePriority = "Low" | "Medium" | "High";
 export type IssueTypeFor = "Bug" | "Feature" | "Task";
 
 export interface IssueFormData {
   title: string;
   description: string;
-  status: IssueStatus | string;
-  priority: IssuePriority |string;
-  type: IssueTypeFor |string;
+  status_id: string;
+  priority: IssuePriority | string;
+  type: IssueTypeFor | string;
   assignee_id: string;
-   due_date: string;
+  due_date: string;
 }
 
 export interface IssueCardType {
@@ -45,7 +48,6 @@ export interface IssueCardType {
   issue_description: string;
   issue_type: IssueTypeFor | string;
   issue_priority: IssuePriority | string;
-  issue_status: IssueStatus | string;
   assignee: {
     id: string;
     email: string;
@@ -58,31 +60,36 @@ export interface IssueCardType {
   createdAt?: string;
   updatedAt?: string;
 }
-export interface cardIssueType{
-    issue_title:string,
-    issue_id:string,
-issue_type:string,
-issue_priority:string,
-issue_status:string,
-reporter:{
-    email:string
-},
-onClick:()=>void
+export interface cardIssueType {
+  issue_title: string;
+  issue_id: string;
+  issue_type: string;
+  issue_priority: string;
+  assignee_email: string;
+  assignee_id: string;
+  reporter_email: string;
+  reporter_id: string;
+  onClick: () => void;
+  project_id: string;
+  status_id: string;
+  status_name: string;
 }
 export interface Member {
   id: string;
   name: string;
   email: string;
+  role: string;
 }
 export interface IssueCardProps {
-  issue_id:string
+  issue_id: string;
   title: string;
   typeText: string;
-  statusText: string;
+  status_id: string;
   priorityText: string;
   reporter_email: string;
   onClick?: () => void;
   onStatusChange?: (issueId: string, newStatus: string) => void;
+  project_id: string;
 }
 export interface IssueFormDialogProps {
   open: boolean;
@@ -92,8 +99,8 @@ export interface IssueFormDialogProps {
 }
 export interface IssueDeleteDialogProps {
   open: boolean;
-  selectedValue: string;  
-  issueId: string; 
+  selectedValue: string;
+  issueId: string;
   onClose: () => void;
-  projectId:string
+  projectId: string;
 }

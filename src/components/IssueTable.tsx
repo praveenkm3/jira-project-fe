@@ -85,7 +85,8 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
               <VisibilityIcon />
             </Button>
 
-            {currentUser?.id === params.row.reporter_id && (
+            {currentUser?.id === params.row.reporter_id ||
+            currentUser?.id === params.row.assignee_id ? (
               <>
                 <Button
                   variant="outlined"
@@ -102,22 +103,25 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
                 >
                   <EditIcon />
                 </Button>
-
-                <Button
-                  variant="outlined"
-                  color="error"
-                  size="small"
-                  sx={{
-                    minWidth: 32,
-                    width: 32,
-                    height: 32,
-                    padding: 0,
-                  }}
-                  onClick={() => setDeleteIssue(params.row)}
-                >
-                  <DeleteIcon />
-                </Button>
               </>
+            ) : (
+              <></>
+            )}
+            {currentUser?.id === params.row.reporter_id && (
+              <Button
+                variant="outlined"
+                color="error"
+                size="small"
+                sx={{
+                  minWidth: 32,
+                  width: 32,
+                  height: 32,
+                  padding: 0,
+                }}
+                onClick={() => setDeleteIssue(params.row)}
+              >
+                <DeleteIcon />
+              </Button>
             )}
           </Box>
         );
@@ -139,14 +143,17 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
   });
   useEffect(() => {
     const timer = setTimeout(() => {
-      const field=filterData.field.trim();
-      const value=filterData.value.trim();
-      setFilterDataSend({field,value});
+      const field = filterData.field.trim();
+      const value = filterData.value.trim();
+      setFilterDataSend({ field, value });
     }, 2000);
     return () => clearTimeout(timer);
   }, [filterData]);
   const handleFilter = (e: GridFilterModel) => {
-    setFilterData({ field: e.items[0].field.trim(), value: e.items[0].value ?? "" });
+    setFilterData({
+      field: e.items[0].field.trim(),
+      value: e.items[0].value ?? "",
+    });
     // console.log(e.items[0].field);
     // console.log(e.items[0].value);
   };
@@ -164,10 +171,11 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
     issue_description: issue.issue_description,
     issue_type: issue.issue_type,
     issue_priority: issue.issue_priority,
-    issue_status: issue.issue_status,
-    reporter: issue.reporter.email,
+    issue_status: issue.issue_status.status_name,
+    reporter: issue.reporter.name,
     reporter_id: issue.reporter.id,
-    assignee: issue.assignee?.email,
+    assignee: issue.assignee?.name,
+    assignee_id: issue.assignee?.id,
     issue_due_date: issue.issue_due_date,
     originalIssue: issue,
     issue_id: issue.issue_id,

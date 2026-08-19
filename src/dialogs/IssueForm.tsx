@@ -11,23 +11,24 @@ import {
   IconButton,
   Autocomplete,
   Avatar,
+  Chip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useAddIssues, useGetProjectMembers } from "../hooks/issues.hook";
+import { useGetSpecificProjectStatuses } from "../hooks/project.hooks";
 import { UseAuth } from "../contexts/AuthContext";
 import type {
-  IssueFormData,
-  IssueStatus,
+  IssueFormData, 
   IssuePriority,
   IssueTypeFor,
   Member,
   IssueFormDialogProps,
 } from "../utils/issue.types";
-import { useUpdateIssue } from "../hooks/issues.hook";
-const STATUS_OPTIONS: IssueStatus[] = ["Open", "In Progress", "Done"];
+import type{ statusType } from "../utils/use.types";
+import { useUpdateIssue } from "../hooks/issues.hook"; 
 const PRIORITY_OPTIONS: IssuePriority[] = ["Low", "Medium", "High"];
 const TYPE_OPTIONS: IssueTypeFor[] = ["Bug", "Feature", "Task"];
 
@@ -42,8 +43,8 @@ const textFieldSx = {
 
 const emptyForm: IssueFormData = {
   title: "",
-  description: "",
-  status: "Open",
+  description: "", 
+  status_id: "",
   priority: "Medium",
   type: "Bug",
   assignee_id: "",
@@ -59,10 +60,10 @@ export default function IssueFormDialog({
   const {currentUser}=UseAuth()!;
   const { mutate: addIssue, isPending } = useAddIssues(projectId);
   const { data: members } = useGetProjectMembers(projectId);
-
+  const{data:projectStatuses,isFetching:isStatusFetching}=useGetSpecificProjectStatuses(projectId);
   const [formData, setFormData] = useState<IssueFormData>(emptyForm);
   const [dueDate, setDueDate] = useState<Dayjs | null>(null);
-  const isAuthor=currentUser?.id===issue?.reporter.id
+  const isAuthor=currentUser?.id===issue?.reporter.id || currentUser?.id===issue?.assignee!.id
   const { mutate: updateIssue } = useUpdateIssue(projectId,isAuthor);
   useEffect(() => {
     if (!open) return;
@@ -70,8 +71,8 @@ export default function IssueFormDialog({
     if (issue) {
       setFormData({
         title: issue.issue_title,
-        description: issue.issue_description,
-        status: issue.issue_status,
+        description: issue.issue_description, 
+        status_id: issue.issue_status.status_id, 
         priority: issue.issue_priority,
         type: issue.issue_type,
         assignee_id: issue.assignee?.id ?? "",
@@ -105,7 +106,7 @@ export default function IssueFormDialog({
       return;
     }
     const payload = { ...formData, due_date: dueDate.format("YYYY-MM-DD") };
-    if (issue) {
+    if (issue) { 
       updateIssue(
         { issueId: issue.issue_id, data: payload },
         {
@@ -118,7 +119,7 @@ export default function IssueFormDialog({
           },
         },
       );
-    } else {
+    } else { 
       addIssue(payload, {
         onSuccess: () => {
           toast.success("Issue created successfully");
@@ -168,14 +169,14 @@ export default function IssueFormDialog({
             <TextField
               select
               label="Status"
-              value={formData.status}
-              onChange={handleChange("status")}
+              value={formData.status_id}
+              onChange={handleChange("status_id")}
               fullWidth
               sx={textFieldSx}
             >
-              {STATUS_OPTIONS.map((status) => (
-                <MenuItem key={status} value={status}>
-                  {status}
+              {!isStatusFetching && projectStatuses.map((status:statusType) => (
+                <MenuItem key={status.status_id} value={status.status_id}>
+                  {status.status_name}
                 </MenuItem>
               ))}
             </TextField>
@@ -247,6 +248,7 @@ export default function IssueFormDialog({
                 </Avatar>
 
                 {member.name}
+                <Chip label={member.role} size="small" variant="outlined" sx={{ height: 20, fontSize: 10,ml:"auto" }} />
               </Box>
             )}
             onChange={(_, value) =>

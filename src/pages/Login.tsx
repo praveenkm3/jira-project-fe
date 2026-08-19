@@ -11,7 +11,6 @@ import { UseAuth } from "../contexts/AuthContext";
 import { toast } from "react-toastify";
 
 
-
 export default function Login() {
   const { mutate } = useLogin();
   const navigate=useNavigate();

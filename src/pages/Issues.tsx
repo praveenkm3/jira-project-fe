@@ -27,9 +27,10 @@ export const Issues = () => {
   if (isLoading) {
     return <PageLoader />;
   }
-  const open = data["Open"] ?? [];
-  const inprogress = data["In Progress"] ?? [];
-  const done = data["Done"] ?? [];
+  // const open = data["Open"] ?? [];
+  // const inprogress = data["In Progress"] ?? [];
+  // const done = data["Done"] ?? [];
+  const projectNames = Object.keys(data);
 
   return (
     <Box>
@@ -57,88 +58,39 @@ export const Issues = () => {
           </Button>
         </Box>
       </Box>
-      <Box sx={{ display: "flex", gap: 3 }}>
-        <Box sx={{ flex: 1, minWidth: 260 }}>
-          <Typography sx={{ fontSize: 13, fontWeight: 700, mb: 2 }}>
-            Open {open.length}
-          </Typography>
-          {open.map((item: cardIssueType) => {
-            return (
-              <IssueCard
-                key={item.issue_id}
-                issue_id={item.issue_id}
-                title={item.issue_title}
-                typeText={item.issue_type}
-                priorityText={item.issue_priority}
-                statusText={item.issue_status}
-                reporter_email={item.reporter.email}
-                onClick={() => {
-                  navigate(`/issues/${item.issue_id}`);
-                }}
-                onStatusChange={(issueId: string, newStatus: string) => {
-                  changeTaskStatus({
-                    issueId: issueId,
-                    status: newStatus,
-                  });
-                }}
-              />
-            );
-          })}
-        </Box>
-        <Box sx={{ flex: 1, minWidth: 260 }}>
-          <Typography sx={{ fontSize: 13, fontWeight: 700, mb: 2 }}>
-            In Progress {inprogress.length}
-          </Typography>
-          {inprogress.map((item: cardIssueType) => {
-            return (
-              <IssueCard
-                key={item.issue_id}
-                issue_id={item.issue_id}
-                title={item.issue_title}
-                typeText={item.issue_type}
-                priorityText={item.issue_priority}
-                statusText={item.issue_status}
-                reporter_email={item.reporter.email}
-                onClick={() => {
-                  navigate(`/issues/${item.issue_id}`);
-                }}
-                onStatusChange={(issueId: string, newStatus: string) => {
-                  changeTaskStatus({
-                    issueId: issueId,
-                    status: newStatus,
-                  });
-                }}
-              />
-            );
-          })}
-        </Box>
-        <Box sx={{ flex: 1, minWidth: 260 }}>
-          <Typography sx={{ fontSize: 13, fontWeight: 700, mb: 2 }}>
-            Done {done.length}
-          </Typography>
-          {done.map((item: cardIssueType) => {
-            return (
-              <IssueCard
-                key={item.issue_id}
-                issue_id={item.issue_id}
-                title={item.issue_title}
-                typeText={item.issue_type}
-                priorityText={item.issue_priority}
-                statusText={item.issue_status}
-                reporter_email={item.reporter.email}
-                onClick={() => {
-                  navigate(`/issues/${item.issue_id}`);
-                }}
-                onStatusChange={(issueId: string, newStatus: string) => {
-                  changeTaskStatus({
-                    issueId: issueId,
-                    status: newStatus,
-                  });
-                }}
-              />
-            );
-          })}
-        </Box>
+      <Box sx={{ display: "flex", gap: 3 }}> 
+        {projectNames.map((key) => {
+          return (
+            <Box sx={{ flex: 1, maxWidth: 300 }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 700, mb: 2 }}>
+            {key} {data[key].length}
+            </Typography>
+              {data[key].map((item: cardIssueType) => {
+                return (
+                  <IssueCard
+                    key={item.issue_id}
+                    issue_id={item.issue_id}
+                    title={item.issue_title}
+                    typeText={item.issue_type}
+                    priorityText={item.issue_priority}
+                    status_id={item.status_id}
+                    reporter_email={item.reporter_email}
+                    project_id={item.project_id}
+                    onClick={() => {
+                      navigate(`/issues/${item.issue_id}`);
+                    }}
+                    onStatusChange={(issueId: string, newStatus: string) => {
+                      changeTaskStatus({
+                        issueId: issueId,
+                        status: newStatus,
+                      });
+                    }}
+                  />
+                );
+              })}
+            </Box>
+          );
+        })}
       </Box>
     </Box>
   );

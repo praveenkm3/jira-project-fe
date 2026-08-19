@@ -4,17 +4,23 @@ import mediumIcon from "../../public/equal.svg";
 import lowIcon from "../../public/down.png";
 import type { IssueCardProps } from "../utils/issue.types";
 import { stringToColor } from "../algorithms/strings_operations";
+import { useGetSpecificProjectStatuses } from "../hooks/project.hooks";
+import type { statusType } from "../utils/use.types";
+
 
 export default function IssueCard({
   title,
   typeText,
-  statusText,
+  status_id,
   priorityText,
   reporter_email,
   onClick,
   issue_id,
-  onStatusChange
+  onStatusChange,
+  project_id
 }: IssueCardProps) {
+const{data:projectStatuses,isFetching:statusesFetching}=useGetSpecificProjectStatuses(project_id);
+
   return (
     <Box
       key={issue_id}
@@ -62,10 +68,10 @@ export default function IssueCard({
         }}
       >
         <Select
-          value={statusText}
+          value={status_id}
           size="small"
           onClick={(e) => e.stopPropagation()}
-          onChange={(e) => {
+          onChange={(e) => { 
             e.stopPropagation();
             onStatusChange?.(issue_id, e.target.value);
           }}
@@ -73,19 +79,14 @@ export default function IssueCard({
             height: 28,
             fontSize: 11,
             fontWeight: 600,
-            color:
-              statusText === "Open"
-                ? "#3B82F6"
-                : statusText === "In Progress"
-                  ? "#F59E0B"
-                  : statusText === "Done"
-                    ? "#22C55E"
-                    : "#6B7280",
+            width:120
           }}
         >
-          <MenuItem value="Open">Open</MenuItem>
-          <MenuItem value="In Progress">In Progress</MenuItem>
-          <MenuItem value="Done">Done</MenuItem>
+          {
+            !statusesFetching && projectStatuses.map((item:statusType)=>{
+              return <MenuItem value={item.status_id} key={item.status_name}>{item.status_name}</MenuItem>
+            })
+          }
         </Select>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>

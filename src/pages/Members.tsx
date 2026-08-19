@@ -6,7 +6,7 @@ import { useGetSpecificProjectMembers } from "../hooks/project.hooks";
 import { useState } from "react";
 export default function Members() {
   const { data, isLoading } = useGetMyProjectForSearch();
-  const [project, setProject] = useState<string>(data ? data[0].project_id : "");
+  const [project, setProject] = useState<string>(data ? data[0]?.project_id ?? "" : "");
   const {data:projectMembers,isFetching:membersFetching}=useGetSpecificProjectMembers(project);
   if (isLoading) {
     return <PageLoader />;

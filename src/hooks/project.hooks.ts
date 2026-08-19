@@ -11,7 +11,8 @@ import {
   updateProjectMembers,
   deleteProject,
   getMyProjectForSearch,
-  getSpecificProjectMembers
+  getSpecificProjectMembers,
+  getSpecificProjectStatuses
 } from "../api/project.api";
 import type { ProjectFormData } from "../utils/project.types";
 
@@ -123,6 +124,16 @@ export const useGetSpecificProjectMembers = (projectId:string) => {
     queryKey: ["get-specifc-project-members",projectId],
     queryFn:async ()=>{
       const result=await getSpecificProjectMembers(projectId);
+      return result;
+    }
+  });
+};
+
+export const useGetSpecificProjectStatuses = (projectId:string) => {
+  return useQuery({
+    queryKey: ["get-specifc-project-statuses",projectId],
+    queryFn:async ()=>{
+      const result=await getSpecificProjectStatuses(projectId);
       return result;
     }
   });

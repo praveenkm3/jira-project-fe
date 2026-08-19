@@ -4,23 +4,25 @@ import type { registerType } from "../utils/auth.types";
 import { registerSchema } from "../utils/auth.schema";
 import jiraLogo from "../../public/jira_logo.svg";
 import { toast } from "react-toastify";
+import { toTitleCase } from "../algorithms/strings_operations";
 import {
   Box,
   Button,
   FormControl,
-  FormLabel,
-  Radio,
-  RadioGroup,
+  FormHelperText, 
+  InputLabel,
+  MenuItem, 
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
 import { Link } from "react-router";
-import { useRegister } from "../hooks/auth.hooks";
+import { useGetRoleService, useRegister } from "../hooks/auth.hooks";
 import { useNavigate } from "react-router";
 
 function Register() {
   const { mutate } = useRegister();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -32,15 +34,14 @@ function Register() {
     mutate(data, {
       onSuccess: () => {
         toast.success("Registration Successfull");
-        navigate('/login');
-        
+        navigate("/login");
       },
       onError: () => {
-        toast.success("Registration Not Successfull"); 
+        toast.error("Registration Not Successfull");
       },
     });
   };
-
+  const { data } = useGetRoleService();
   return (
     <Box
       sx={{
@@ -116,37 +117,24 @@ function Register() {
           error={!!errors.password}
           helperText={errors.password?.message}
         />
-        <FormControl error={!!errors.role}>
-          <FormLabel>Role</FormLabel>
-          <RadioGroup row>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 2,
-                px: 1,
-                mr: 1,
-              }}
-            >
-              <Radio value="admin" {...register("role")} />
-              <Typography>Admin</Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 2,
-                px: 1,
-              }}
-            >
-              <Radio value="developer" {...register("role")} />
-              <Typography>Developer</Typography>
-            </Box>
-          </RadioGroup>
+        <FormControl fullWidth error={!!errors.role}>
+          <InputLabel>Role</InputLabel>
+
+          <Select label="Role" defaultValue="" {...register("role")}>
+            <MenuItem value="" disabled>
+              Select a role
+            </MenuItem>
+
+            {data?.map((role:{role_id:string,role_name:string}) => (
+              <MenuItem key={role.role_id} value={role.role_id}>
+                {toTitleCase(role.role_name)}
+              </MenuItem>
+            ))}
+          </Select>
+
+          {errors.role && (
+            <FormHelperText>{errors.role.message}</FormHelperText>
+          )}
         </FormControl>
 
         <Button type="submit" variant="contained" fullWidth>

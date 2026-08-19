@@ -31,4 +31,4 @@ export interface UserOption {
   role: "admin" | "developer";
   joinedat?:string
 }
-
+export type statusType={status_id:string,status_name:string}

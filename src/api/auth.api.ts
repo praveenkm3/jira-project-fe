@@ -27,3 +27,7 @@ export async function fetchUsers() {
     const response=await api.get('/api/users');
     return response.data;
 }
+export async function fetchRoleService() {
+    const response=await api.get('/auth/roles');
+    return response.data;
+}

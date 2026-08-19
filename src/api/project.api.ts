@@ -49,3 +49,7 @@ export async function getSpecificProjectMembers(projectId:string){
     return response.data;
 }
 
+export async function getSpecificProjectStatuses(projectId:string){
+    const response=await api.get(`/api/project/status/${projectId}`);
+    return response.data;
+}
