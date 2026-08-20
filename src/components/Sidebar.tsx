@@ -14,6 +14,7 @@ import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import BugReportOutlinedIcon from "@mui/icons-material/BugReportOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import type { layoutProp } from "../utils/use.types";
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import Navbar from "./Navbar";
 import { useNavigate, useLocation } from "react-router";
 import { UseAuth } from "../contexts/AuthContext";
@@ -25,39 +26,45 @@ const mainNav = [
     label: "Dashboard",
     icon: DashboardOutlinedIcon,
     path: "/dashboard",
-    roles: ["admin", "developer"],
+    roles: ["admin", "user"],
   },
   {
     id: "projects",
     label: "Projects",
     icon: FolderOutlinedIcon,
     path: "/projects",
-    roles: ["admin", "developer"],
+    roles: ["admin", "user"],
   },
   {
     id: "issues",
     label: "Issues",
     icon: BugReportOutlinedIcon,
     path: "/issues",
-    roles: ["developer"],
+    roles: ["user"],
   },
   {
     id: "members",
     label: "Members",
     icon: GroupOutlinedIcon,
     path: "/members",
-    roles: ["admin", "developer"],
+    roles: ["admin", "user"],
   },
+  {
+    id: "designations",
+    label: "Add Designations",
+    icon: PlaylistAddIcon,
+    path: "/designations",
+    roles: ["admin"],
+  },
+  
 ];
 
 export default function Sidebar({ children }: layoutProp) {
   const {currentUser}=UseAuth()!;
-  const role=currentUser?.role;
+  const role=currentUser?.role as string;
   const navigate = useNavigate();
   const location = useLocation();
-  const navList = role=='admin' ? mainNav.filter((item) =>
-    item.roles.includes(role ?? "")
-  ) : mainNav
+  const navList = mainNav.filter((item)=>item.roles.includes(role));
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />

@@ -1,5 +1,5 @@
 import { useMutation ,useQuery} from "@tanstack/react-query";
-import {login,register,profile,logout,fetchRoleService} from "../api/auth.api";
+import {login,register,profile,logout,fetchRoleService,fetchDesignationService} from "../api/auth.api";
 
 export const useLogin = () => {
   return useMutation({
@@ -27,5 +27,11 @@ export const useGetRoleService = () => {
   return useQuery({
     queryKey:['user-roles'],
     queryFn:fetchRoleService
+  })
+};
+export const useGetDesignationService = () => {
+  return useQuery({
+    queryKey:['user-designations'],
+    queryFn:fetchDesignationService
   })
 };

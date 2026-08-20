@@ -27,8 +27,8 @@ export default function AddMembers({
   existingMemberIds,
 }:AddMembersDialogType) {
   const {currentUser}=UseAuth()!;
-  const { data: allUsers } = useFetchAllUsers();
   const isAdmin:boolean =currentUser?.role ==='admin';
+  const { data: allUsers } = useFetchAllUsers(isAdmin);
   const { mutate: addMembers, isPending } = useAddProjectMembers(isAdmin,projectId);
 
   const [selectedUsers, setSelectedUsers] = useState<UserOption[]>([]);
@@ -78,7 +78,7 @@ export default function AddMembers({
                 {u.name.charAt(0).toUpperCase()}
               </Avatar>
               <Box sx={{ flex: 1 }}>{u.name}</Box>
-              <Chip label={u.role} size="small" variant="outlined" sx={{ height: 20, fontSize: 10 }} />
+              <Chip label={u.designation ? u.designation : u.role} size="small" variant="outlined" sx={{ height: 20, fontSize: 10 }} />
             </Box>
           )}
           renderInput={(params) => (

@@ -18,6 +18,7 @@ export default function MembersTable({rows}:{rows:UserOption[]}) {
             <TableCell sx={{color:"white"}}>Email</TableCell>
             <TableCell sx={{color:"white"}} align="left">User Name</TableCell>
             <TableCell sx={{color:"white"}} align="left">Role</TableCell>
+            <TableCell sx={{color:"white"}} align="left">Designation</TableCell>
             <TableCell sx={{color:"white"}} align="left">Is Active</TableCell>
             <TableCell sx={{color:"white"}} align="left">Joined At</TableCell>
           </TableRow>
@@ -30,6 +31,7 @@ export default function MembersTable({rows}:{rows:UserOption[]}) {
               </TableCell>
               <TableCell align="left">{toTitleCase(row.name)}</TableCell>
               <TableCell align="left">{toTitleCase(row.role)}</TableCell>
+              <TableCell align="left">{row.designation ? toTitleCase(row.designation) : "Null"}</TableCell>
               <TableCell align="left">{toTitleCase(row.status)}</TableCell>
               <TableCell align="left">{dayjs(row.joinedat).format("DD MMM YYYY")}</TableCell>
             </TableRow>

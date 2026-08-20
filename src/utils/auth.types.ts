@@ -3,12 +3,15 @@ export interface registerType {
   email: string;
   password: string;
   role: string;
-  id?:string
+  id?: string;
+  designation_id?: string;
 }
 export interface loginType {
   email: string;
   password: string;
-  role?:string;
+  role?: string;
 }
-
-
+export interface designationType {
+  designation_id: string;
+  designation_name: string;
+}

@@ -28,7 +28,8 @@ export interface UserOption {
   name: string;
   status: string;
   email: string;
-  role: "admin" | "developer";
-  joinedat?:string
+  role: string;
+  joinedat?:string;
+  designation:string
 }
 export type statusType={status_id:string,status_name:string}

@@ -61,10 +61,11 @@ export const useUpdateProject = (isAdmin: boolean, projectId: string) => {
     },
   });
 };
-export const useFetchAllUsers = () => {
+export const useFetchAllUsers = (isAdmin:boolean) => {
   return useQuery({
     queryKey: ["fetch-users"],
     queryFn: getAllUsers,
+    enabled:isAdmin
   });
 };
 export const useAddProjectMembers = (isAdmin: boolean, projectId: string) => {
@@ -78,6 +79,7 @@ export const useAddProjectMembers = (isAdmin: boolean, projectId: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-projects"] });
+      queryClient.invalidateQueries({ queryKey: ["get-specifc-project-members",projectId] });
     },
   });
 };

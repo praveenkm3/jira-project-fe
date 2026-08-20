@@ -81,6 +81,7 @@ export interface Member {
   name: string;
   email: string;
   role: string;
+  designation:string;
 }
 export interface IssueCardProps {
   issue_id: string;

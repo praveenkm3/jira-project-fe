@@ -31,3 +31,7 @@ export async function fetchRoleService() {
     const response=await api.get('/auth/roles');
     return response.data;
 }
+export const fetchDesignationService =async () => {
+    const res = await api.get("/auth/designations");
+    return res.data;
+};

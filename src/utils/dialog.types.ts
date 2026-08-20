@@ -16,3 +16,7 @@ export interface AddStatusDialogProps {
   onClose: () => void;
   projectId: string; 
 }
+export interface AddDesignationDialogProps {
+  open: boolean;
+  onClose: () => void; 
+}

@@ -4,6 +4,7 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import { useGetBoardProgressCounts } from "../hooks/dashboard.hooks";
 import PageLoader from "../components/Loader";
+import { UseAuth } from "../contexts/AuthContext";
 const StatCard = ({ icon, label, value }:{icon:React.ReactNode,label:string,value:number}) => (
   <Card variant="outlined" sx={{ flex: 1, borderRadius: 3 }}>
     <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -22,6 +23,7 @@ const StatCard = ({ icon, label, value }:{icon:React.ReactNode,label:string,valu
 
 export default function TotalCountsDisplay() { 
   const {data,isLoading}=useGetBoardProgressCounts(); 
+  const {currentUser}=UseAuth()!;
 if(isLoading){
   return <PageLoader />
 }
@@ -30,7 +32,7 @@ if(isLoading){
       <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
         <StatCard
           icon={<FolderOutlinedIcon />}
-          label="Updated"
+          label={currentUser?.role==='admin' ? "My Projects" : "Updated"}
           value={data?.updated} 
         />
         <StatCard
@@ -40,7 +42,7 @@ if(isLoading){
         />
         <StatCard
           icon={<CalendarMonthOutlinedIcon />}
-          label="Due soon"
+          label={currentUser?.role==='admin' ? "Upcoming Issues" : "Due soon"}
           value={data?.dues_count} 
         />
       </Stack>

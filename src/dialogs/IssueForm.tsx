@@ -286,7 +286,7 @@ export default function IssueFormDialog({
 
                 {member.name}
                 <Chip
-                  label={member.role}
+                  label={member.designation}
                   size="small"
                   variant="outlined"
                   sx={{ height: 20, fontSize: 10, ml: "auto" }}
