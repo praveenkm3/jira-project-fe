@@ -28,7 +28,6 @@ const {setCurrentUser}=UseAuth()!;
     mutate(data, {
       onSuccess:(logData)=>{
         setCurrentUser(logData);
-        toast.success("Login Success");
         navigate('/home')
       },
       onError:()=>{ 

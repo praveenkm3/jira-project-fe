@@ -1,9 +1,6 @@
 import Popover from "@mui/material/Popover";
-import { Box, Typography } from "@mui/material";
-import { useGetNotifications } from "../hooks/notify.hooks";
-import PageLoader from "./Loader";
-import type { notifyType } from "../utils/use.types";
-import { getCurrentHours } from "../algorithms/strings_operations";
+import { Box, Typography } from "@mui/material"; 
+import { useEffect, useState } from "react";
 
 export default function Notifications({
   anchorEl,
@@ -11,10 +8,26 @@ export default function Notifications({
 }: {
   anchorEl: HTMLElement | null;
   onClose: () => void;
-}) {
-  const { data, isLoading } = useGetNotifications();
+}) { 
   const open = Boolean(anchorEl);
+  const [notifications, setNotifications] = useState<string[]>([]);
+  useEffect(() => {
+    const socket = new WebSocket("ws://localhost:5700");
 
+    socket.onopen = () => {
+      console.log("WebSocket connected");
+
+      socket.send("Hello from frontend!");
+    };
+    socket.onmessage = (event) => {
+      console.log("Message from backend:", event.data);
+      setNotifications((prev: string[]) => [...prev, event.data]);
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   return (
     <Popover
@@ -42,46 +55,42 @@ export default function Notifications({
         </Typography>
       </Box>
 
-      <Box sx={{ p: 1.5, display: "flex", flexDirection: "column", gap: 1, overflowY: "auto" }}>
-        {isLoading ? (
-          <PageLoader />
-        ) : data?.length ? (
-          data.map((item: notifyType) => (
-            <Box
-              key={item.notification_id}
+      <Box
+        sx={{
+          p: 1.5,
+          display: "flex",
+          flexDirection: "column",
+          gap: 1,
+          overflowY: "auto",
+        }}
+      >
+        {notifications.map((item: string) => (
+          <Box
+            key={item}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              px: 2,
+              py: 1.5,
+              borderRadius: "8px",
+            }}
+          >
+            <Typography
               sx={{
-                display: "flex",
-                alignItems: "center",
-                width: "100%",
-                px: 2,
-                py: 1.5,
-                borderRadius: "8px"
+                flex: 1,
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#374151",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
-              <Typography
-                sx={{
-                  flex: 1,
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: "#374151",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {item.message}
-              </Typography>
-
-              <Typography sx={{ ml: 2, flexShrink: 0, fontSize: 11, color: "#9CA3AF" }}>
-                {getCurrentHours(item.createdAt)}
-              </Typography>
-            </Box>
-          ))
-        ) : (
-          <Typography sx={{ fontSize: 13, color: "#9CA3AF", textAlign: "center", py: 2 }}>
-            No notifications yet.
-          </Typography>
-        )}
+              {item}
+            </Typography>
+          </Box>
+        ))} 
       </Box>
     </Popover>
   );
