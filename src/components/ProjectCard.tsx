@@ -123,7 +123,7 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
             {project.members.map((m) => (
               <Tooltip
                 key={m.project_members_id}
-                title={`${m.user.name} · ${m.user.role}`}
+                title={`${m.user.name} · ${m.user.role.role_name}`}
               >
                 <Avatar sx={{ bgcolor: "#EEF0FF", color: "#4338CA" }}>
                   {initials(m.user.name)}

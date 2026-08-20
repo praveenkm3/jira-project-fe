@@ -12,7 +12,8 @@ import {
   deleteProject,
   getMyProjectForSearch,
   getSpecificProjectMembers,
-  getSpecificProjectStatuses
+  getSpecificProjectStatuses,
+  addProjectStatuses
 } from "../api/project.api";
 import type { ProjectFormData } from "../utils/project.types";
 
@@ -137,4 +138,25 @@ export const useGetSpecificProjectStatuses = (projectId:string) => {
       return result;
     }
   });
+};
+
+export const useAddProjectStatuses = (projectId:string,isAdmin:boolean) => {
+  return useMutation({
+    mutationFn:async (status_name:string)=>{
+      if (!isAdmin) {
+        throw new Error("Only admins can Add statuses");
+      }
+      const result=await addProjectStatuses(projectId,status_name);
+      return result;
+    },
+    onSuccess:()=>{
+      queryClient.invalidateQueries({
+        queryKey: ["get-project-issues", projectId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get-specifc-project-statuses", projectId],
+      });
+    }
+    
+  })
 };

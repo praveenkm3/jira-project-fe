@@ -14,6 +14,7 @@ export interface IssueType {
   assignee: IssueUser | null;
   reporter: IssueUser;
   issue_due_date: string;
+  issue_start_date?: string;
   createdAt: string;
   updatedAt: string;
   issue_status: {
@@ -35,6 +36,7 @@ export interface IssueFormData {
   type: IssueTypeFor | string;
   assignee_id: string;
   due_date: string;
+  start_date?: string;
 }
 
 export interface IssueCardType {

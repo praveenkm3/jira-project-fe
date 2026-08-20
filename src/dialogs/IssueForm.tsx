@@ -21,14 +21,14 @@ import { useAddIssues, useGetProjectMembers } from "../hooks/issues.hook";
 import { useGetSpecificProjectStatuses } from "../hooks/project.hooks";
 import { UseAuth } from "../contexts/AuthContext";
 import type {
-  IssueFormData, 
+  IssueFormData,
   IssuePriority,
   IssueTypeFor,
   Member,
   IssueFormDialogProps,
 } from "../utils/issue.types";
-import type{ statusType } from "../utils/use.types";
-import { useUpdateIssue } from "../hooks/issues.hook"; 
+import type { statusType } from "../utils/use.types";
+import { useUpdateIssue } from "../hooks/issues.hook";
 const PRIORITY_OPTIONS: IssuePriority[] = ["Low", "Medium", "High"];
 const TYPE_OPTIONS: IssueTypeFor[] = ["Bug", "Feature", "Task"];
 
@@ -43,12 +43,13 @@ const textFieldSx = {
 
 const emptyForm: IssueFormData = {
   title: "",
-  description: "", 
+  description: "",
   status_id: "",
   priority: "Medium",
   type: "Bug",
   assignee_id: "",
   due_date: "",
+  start_date: "",
 };
 
 export default function IssueFormDialog({
@@ -57,31 +58,42 @@ export default function IssueFormDialog({
   projectId,
   issue,
 }: IssueFormDialogProps) {
-  const {currentUser}=UseAuth()!;
+  const { currentUser } = UseAuth()!;
   const { mutate: addIssue, isPending } = useAddIssues(projectId);
   const { data: members } = useGetProjectMembers(projectId);
-  const{data:projectStatuses,isFetching:isStatusFetching}=useGetSpecificProjectStatuses(projectId);
+  const { data: projectStatuses, isFetching: isStatusFetching } =
+    useGetSpecificProjectStatuses(projectId);
   const [formData, setFormData] = useState<IssueFormData>(emptyForm);
+
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [dueDate, setDueDate] = useState<Dayjs | null>(null);
-  const isAuthor=currentUser?.id===issue?.reporter.id || currentUser?.id===issue?.assignee!.id
-  const { mutate: updateIssue } = useUpdateIssue(projectId,isAuthor);
+
+  const isAuthor =
+    currentUser?.id === issue?.reporter.id ||
+    currentUser?.id === issue?.assignee!.id;
+  const { mutate: updateIssue } = useUpdateIssue(projectId, isAuthor);
   useEffect(() => {
     if (!open) return;
 
     if (issue) {
       setFormData({
         title: issue.issue_title,
-        description: issue.issue_description, 
-        status_id: issue.issue_status.status_id, 
+        description: issue.issue_description,
+        status_id: issue.issue_status.status_id,
         priority: issue.issue_priority,
         type: issue.issue_type,
         assignee_id: issue.assignee?.id ?? "",
+        start_date: issue.issue_start_date ?? "",
         due_date: issue.issue_due_date ?? "",
       });
 
+      setStartDate(
+        issue.issue_start_date ? dayjs(issue.issue_start_date) : null,
+      );
       setDueDate(issue.issue_due_date ? dayjs(issue.issue_due_date) : null);
     } else {
       setFormData(emptyForm);
+      setStartDate(null);
       setDueDate(null);
     }
   }, [open, issue]);
@@ -101,16 +113,24 @@ export default function IssueFormDialog({
       toast.error("Due date is required");
       return;
     }
+    if (startDate && dueDate && startDate.isAfter(dueDate, "day")) {
+      toast.error("Start date cannot be after due date");
+      return;
+    }
     if (!formData.assignee_id) {
       toast.error("Assigned user is required");
       return;
     }
-    const payload = { ...formData, due_date: dueDate.format("YYYY-MM-DD") };
-    if (issue) { 
+    const payload = {
+      ...formData,
+      start_date: startDate ? startDate.format("YYYY-MM-DD") : "",
+      due_date: dueDate.format("YYYY-MM-DD"),
+    };
+    if (issue) {
       updateIssue(
         { issueId: issue.issue_id, data: payload },
         {
-          onSuccess: () => { 
+          onSuccess: () => {
             toast.success("Issue Updated Successfully");
             onClose();
           },
@@ -119,7 +139,7 @@ export default function IssueFormDialog({
           },
         },
       );
-    } else { 
+    } else {
       addIssue(payload, {
         onSuccess: () => {
           toast.success("Issue created successfully");
@@ -174,11 +194,12 @@ export default function IssueFormDialog({
               fullWidth
               sx={textFieldSx}
             >
-              {!isStatusFetching && projectStatuses.map((status:statusType) => (
-                <MenuItem key={status.status_id} value={status.status_id}>
-                  {status.status_name}
-                </MenuItem>
-              ))}
+              {!isStatusFetching &&
+                projectStatuses.map((status: statusType) => (
+                  <MenuItem key={status.status_id} value={status.status_id}>
+                    {status.status_name}
+                  </MenuItem>
+                ))}
             </TextField>
 
             <TextField
@@ -197,7 +218,7 @@ export default function IssueFormDialog({
             </TextField>
             <TextField
               select
-              label="Priority"
+              label="Type"
               value={formData.type}
               onChange={handleChange("type")}
               fullWidth
@@ -210,18 +231,34 @@ export default function IssueFormDialog({
               ))}
             </TextField>
           </Box>
-          <DatePicker
-            label="Due Date"
-            value={dueDate}
-            onChange={(newValue) => setDueDate(newValue)}
-            minDate={dayjs()}
-            slotProps={{
-              textField: {
-                fullWidth: true,
-                sx: textFieldSx,
-              },
-            }}
-          />
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <DatePicker
+              label="Start Date"
+              value={startDate}
+              onChange={(newValue) => setStartDate(newValue)}
+              minDate={dayjs()}
+              maxDate={dueDate ?? undefined}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  sx: textFieldSx,
+                },
+              }}
+              disabled={!dueDate}
+            />
+            <DatePicker
+              label="Due Date"
+              value={dueDate}
+              onChange={(newValue) => setDueDate(newValue)}
+              minDate={dayjs()}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  sx: textFieldSx,
+                },
+              }}
+            />
+          </Box>
 
           <Autocomplete<Member>
             options={members ?? []}
@@ -248,7 +285,12 @@ export default function IssueFormDialog({
                 </Avatar>
 
                 {member.name}
-                <Chip label={member.role} size="small" variant="outlined" sx={{ height: 20, fontSize: 10,ml:"auto" }} />
+                <Chip
+                  label={member.role}
+                  size="small"
+                  variant="outlined"
+                  sx={{ height: 20, fontSize: 10, ml: "auto" }}
+                />
               </Box>
             )}
             onChange={(_, value) =>

@@ -25,7 +25,6 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
   const [deleteIssue, setDeleteIssue] = useState<IssueType | null>(null);
   const columns: GridColDef[] = [
     { field: "issue_title", headerName: "Issue Title", flex: 1, minWidth: 150 },
-    { field: "issue_number", headerName: "Number", flex: 0.5, minWidth: 80 },
     {
       field: "issue_description",
       headerName: "Description",
@@ -42,6 +41,20 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
     { field: "issue_status", headerName: "Status", flex: 0.7, minWidth: 100 },
     { field: "reporter", headerName: "Creator", flex: 1, minWidth: 150 },
     { field: "assignee", headerName: "Assignee", flex: 1, minWidth: 150 },
+
+    {
+      field: "issue_start_date",
+      headerName: "Start Date",
+      flex: 0.5,
+      minWidth: 130,
+      renderCell(params) {
+        if(params.row.issue_start_date){
+          return dayjs(params.row.issue_start_date).format("DD MMM YYYY");
+        }else{
+          return "Not Started";
+        }
+      },
+    },
     {
       field: "issue_due_date",
       headerName: "Due Date",
@@ -177,6 +190,7 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
     assignee: issue.assignee?.name,
     assignee_id: issue.assignee?.id,
     issue_due_date: issue.issue_due_date,
+    issue_start_date: issue.issue_start_date,
     originalIssue: issue,
     issue_id: issue.issue_id,
   }));

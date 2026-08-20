@@ -19,7 +19,7 @@ import { IssueTable } from "./IssueTable";
 import IssueFormDialog from "../dialogs/IssueForm"; 
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-
+import AddNewStatus from "../dialogs/AddNewStatus";
 
 export const ProjectDetails = () => {
   const navigate=useNavigate();
@@ -33,6 +33,7 @@ export const ProjectDetails = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [issueDialogOpen, setIssueDialogOpen] = useState(false);
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
 
   if (isLoading) {
     return <PageLoader />;
@@ -122,7 +123,16 @@ export const ProjectDetails = () => {
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
           Issues
         </Typography>
-        <Button
+        <Box sx={{display:"flex",gap:3}}> 
+          {isAdmin && <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setStatusDialogOpen(true)}
+          sx={{ borderRadius: 2, textTransform: "none" }}
+        >
+          Add Statuses
+        </Button>}
+          <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => setIssueDialogOpen(true)}
@@ -130,6 +140,8 @@ export const ProjectDetails = () => {
         >
           Add Issue
         </Button>
+        
+        </Box>
       </Box> 
 
       <IssueTable projectId={projectId as string} />
@@ -145,6 +157,13 @@ export const ProjectDetails = () => {
         onClose={() => setIssueDialogOpen(false)} 
         projectId={project.project_id}
       />
+      <AddNewStatus
+      open={statusDialogOpen}
+      onClose={()=>setStatusDialogOpen(false)}
+      projectId={projectId!}
+      
+      />
+
     </>
   
   );

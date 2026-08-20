@@ -11,3 +11,8 @@ export interface AddMembersDialogType {
   projectId: string;
   existingMemberIds: string[]; 
 }
+export interface AddStatusDialogProps {
+  open: boolean;
+  onClose: () => void;
+  projectId: string; 
+}

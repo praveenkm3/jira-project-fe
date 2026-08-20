@@ -1,5 +1,4 @@
-import { Box, Card, CardContent, Typography, Stack } from "@mui/material";
-import TaskAltIcon from '@mui/icons-material/TaskAlt'; 
+import { Box, Card, CardContent, Typography, Stack } from "@mui/material"; 
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
@@ -29,11 +28,6 @@ if(isLoading){
   return (
     <Box sx={{ p: 3 }}>
       <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
-        <StatCard
-          icon={<TaskAltIcon />}
-          label="Completed"
-          value={data?.completed} 
-        />
         <StatCard
           icon={<FolderOutlinedIcon />}
           label="Updated"
