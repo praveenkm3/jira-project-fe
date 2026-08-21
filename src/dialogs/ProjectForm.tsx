@@ -26,7 +26,28 @@ const textFieldSx = {
     "&.Mui-focused fieldset": { borderColor: "#3b82f6", borderWidth: 2 },
   },
 };
+import { z } from "zod";
 
+const projectSchema = z.object({
+  project_name: z
+    .string()
+    .trim()
+    .min(1, "Project Name is required")
+    .max(100, "Project Name must be at most 100 characters"),
+
+  project_key: z
+    .string()
+    .trim()
+    .min(1, "Project Key is required")
+    .max(20, "Project Key must be at most 20 characters"),
+
+  project_description: z
+    .string()
+    .trim()
+    .max(500, "Description must be at most 500 characters"),
+
+  project_status: z.enum(["ACTIVE", "COMPLETED"]),
+});
 interface ProjectForm {
   open: boolean;
   onClose: () => void;
@@ -51,23 +72,55 @@ export default function ProjectForm({
   const isEditMode = !!initialData;
 
   const { mutate: addProject, isPending: isAdding } = useAddProject(isAdmin);
-  const { mutate: updateProject, isPending: isUpdating } =useUpdateProject(isAdmin,initialData?.project_id as string);
+  const { mutate: updateProject, isPending: isUpdating } = useUpdateProject(
+    isAdmin,
+    initialData?.project_id as string,
+  );
 
   const [formData, setFormData] = useState<ProjectFormData>(emptyForm);
-
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ProjectFormData, string>>
+  >({});
   useEffect(() => {
     if (open) {
       setFormData(initialData ?? emptyForm);
     }
   }, [open, initialData]);
 
-  const handleChange =(field: keyof ProjectFormData) =>(e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+  const handleChange =
+    (field: keyof ProjectFormData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+
+      setErrors((prev) => ({
+        ...prev,
+        [field]: undefined,
+      }));
     };
 
   const handleSubmit = () => {
+    const result = projectSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof ProjectFormData, string>> = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof ProjectFormData;
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = issue.message;
+        }
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
+
     if (isEditMode && initialData?.project_id) {
-      updateProject(formData, {
+      updateProject(result.data, {
         onSuccess: () => {
           toast.success("Project Updated successfully");
           onClose();
@@ -75,17 +128,7 @@ export default function ProjectForm({
         onError: () => toast.error("Project not updated"),
       });
     } else {
-      const projectName=formData.project_name.trim();
-      const projectKey=formData.project_key.trim();
-      if(!projectName){
-        toast.error("Project Name is required")
-        return 
-      }
-      if(!projectKey){
-        toast.error("Project Key is required")
-        return 
-      }
-      addProject(formData, {
+      addProject(result.data, {
         onSuccess: () => {
           toast.success("Project created successfully");
           onClose();
@@ -121,6 +164,8 @@ export default function ProjectForm({
             onChange={handleChange("project_name")}
             fullWidth
             sx={textFieldSx}
+            error={!!errors.project_name}
+            helperText={errors.project_name}
           />
           <TextField
             label="Project Key"
@@ -129,6 +174,8 @@ export default function ProjectForm({
             fullWidth
             sx={textFieldSx}
             disabled={isEditMode}
+            error={!!errors.project_key}
+            helperText={errors.project_key}
           />
           <TextField
             label="Project Description"

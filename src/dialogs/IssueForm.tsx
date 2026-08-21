@@ -313,7 +313,7 @@ export default function IssueFormDialog({
         <Button
           onClick={handleSubmit}
           variant="contained"
-          disabled={isPending}
+          disabled={isPending || !(!!formData.title)}
           sx={{ textTransform: "none", borderRadius: 2 }}
         >
           {issue ? "Update" : "Save"}

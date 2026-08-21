@@ -12,7 +12,7 @@ import { toTitleCase } from "../algorithms/strings_operations";
 import { UseAuth } from "../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-
+import queryClient from "../hooks/queryClient";
 export const Profile = ({
   anchorEl,
   onClose,
@@ -23,15 +23,16 @@ export const Profile = ({
   const { mutate } = useLogout();
   const { removeUser } = UseAuth()!;
   const navigate = useNavigate();
-  const { data: profileData, isLoading } = useGetProfile();
-  // console.log(profileData);
+  const { data: profileData, isLoading } = useGetProfile(); 
   const open = Boolean(anchorEl);
   const handleLogout = () => {
     mutate(undefined, {
       onSuccess: () => {
         removeUser();
         toast.success("Logout Success");
+        queryClient.clear();
         navigate("/login");
+
       },
       onError: () => {
         toast.error("Logout Not Success");
@@ -77,7 +78,7 @@ export const Profile = ({
                 {toTitleCase(profileData!.email)}
               </Typography>
               <Chip
-                label={toTitleCase(profileData!.role)}
+                label={ !profileData!.designation ? "Admin" : toTitleCase(profileData!.designation)}
                 size="small"
                 variant="outlined"
                 color={profileData!.role === "admin" ? "success" : "primary"}
