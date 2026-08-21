@@ -11,23 +11,18 @@ export const BarChartPriority = () => {
   }
 
   const priorityNames = data.map(
-    (item: { priority: string; count: number | string }) => item.priority
+    (item: { priority: string; count: number | string }) => item.priority,
   );
 
   const priorityCounts = data.map(
-    (item: { priority: string; count: number | string }) =>
-      Number(item.count)
+    (item: { priority: string; count: number | string }) => Number(item.count),
   );
 
   return (
     <Box>
-      <Typography sx={{ fontWeight: 700 }}>
-        Status Overview
-      </Typography>
+      <Typography sx={{ fontWeight: 700 }}>Status Overview</Typography>
 
-      <Typography sx={{ fontWeight: 500 }}>
-        Priority Breakdown
-      </Typography>
+      <Typography sx={{ fontWeight: 500 }}>Priority Breakdown</Typography>
 
       <BarChart
         xAxis={[
@@ -37,11 +32,7 @@ export const BarChartPriority = () => {
             colorMap: {
               type: "ordinal",
               values: ["Medium", "Low", "High"],
-              colors: [
-                "#3b82f6",
-                "#22c55e",  
-                "#f5510b",  
-              ],
+              colors: ["#3b82f6", "#22c55e", "#f5510b"],
             },
           },
         ]}
@@ -50,7 +41,7 @@ export const BarChartPriority = () => {
             data: priorityCounts,
             label: "Issue Priority",
             barLabel: "value",
-            color:"none"
+            color: "none",
           },
         ]}
         height={250}

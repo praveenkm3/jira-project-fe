@@ -48,7 +48,7 @@ export const Projects = () => {
         sx={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-          gap: 2, 
+          gap: 2,
         }}
       >
         {data.map((project: ProjectType) => (

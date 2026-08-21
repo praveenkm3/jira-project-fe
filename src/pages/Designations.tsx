@@ -1,25 +1,19 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useGetDesignationService } from "../hooks/auth.hooks"; 
+import { useGetDesignationService } from "../hooks/auth.hooks";
 import { toTitleCase } from "../algorithms/strings_operations";
 import { useState } from "react";
 import AddDesignationDialog from "../dialogs/AddDesignationDialog";
 
 function Designations() {
   const { data: designations, isLoading } = useGetDesignationService();
-const[designationOpen,setDesignationOpen]=useState<boolean>(false);
-  const handleAddDesignation = () => { 
+  const [designationOpen, setDesignationOpen] = useState<boolean>(false);
+  const handleAddDesignation = () => {
     setDesignationOpen(true);
   };
 
   return (
-    <Box sx={{ p: 3 }}> 
+    <Box sx={{ p: 3 }}>
       <Box
         sx={{
           display: "flex",
@@ -29,9 +23,9 @@ const[designationOpen,setDesignationOpen]=useState<boolean>(false);
         }}
       >
         <Box>
-          <Typography variant="h5" sx={{fontWeight:600}}>
+          <Typography variant="h5" sx={{ fontWeight: 600 }}>
             Designations
-          </Typography> 
+          </Typography>
         </Box>
 
         <Button
@@ -42,7 +36,7 @@ const[designationOpen,setDesignationOpen]=useState<boolean>(false);
           Add Designation
         </Button>
       </Box>
- 
+
       <Card>
         <CardContent>
           {isLoading ? (
@@ -87,12 +81,10 @@ const[designationOpen,setDesignationOpen]=useState<boolean>(false);
         </CardContent>
       </Card>
       <AddDesignationDialog
-      open={designationOpen}
-      onClose={()=>setDesignationOpen(false)}
+        open={designationOpen}
+        onClose={() => setDesignationOpen(false)}
       />
-      
     </Box>
-    
   );
 }
 

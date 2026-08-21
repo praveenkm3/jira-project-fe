@@ -1,37 +1,41 @@
 import { useState } from "react";
 import { Box, Avatar, Typography, TextField, Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/EditOutlined";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
-import { useUpdateComment,useDeleteComment } from "../hooks/comment.hooks";
-import type {commentUpdateType,CommentItemProps } from "../utils/comments.types";
+import { useUpdateComment, useDeleteComment } from "../hooks/comment.hooks";
+import type {
+  commentUpdateType,
+  CommentItemProps,
+} from "../utils/comments.types";
 import { initials } from "../algorithms/strings_operations";
 import { toTitleCase } from "../algorithms/strings_operations";
 
-
-
-export default function CommentItem({ comment, currentUserId }: CommentItemProps) {
+export default function CommentItem({
+  comment,
+  currentUserId,
+}: CommentItemProps) {
   const isAuthor = comment.creator.id === currentUserId;
 
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(comment.comment);
 
-  const { mutate: updateComment, isPending: isUpdating } = useUpdateComment(comment.comment_id);
+  const { mutate: updateComment, isPending: isUpdating } = useUpdateComment(
+    comment.comment_id,
+  );
   const { mutate: deleteComment, isPending: isDeleting } = useDeleteComment();
 
   const handleSaveEdit = () => {
     if (!editText.trim()) return;
-    const payload:commentUpdateType={ message: editText };
-    updateComment(payload,
-      {
-        onSuccess: () => {
-          toast.success("Comment updated");
-          setIsEditing(false);
-        },
-        onError: () => toast.error("Failed to update comment"),
-      }
-    );
+    const payload: commentUpdateType = { message: editText };
+    updateComment(payload, {
+      onSuccess: () => {
+        toast.success("Comment updated");
+        setIsEditing(false);
+      },
+      onError: () => toast.error("Failed to update comment"),
+    });
   };
 
   const handleDelete = () => {
@@ -57,9 +61,14 @@ export default function CommentItem({ comment, currentUserId }: CommentItemProps
           </Typography>
 
           {isAuthor && !isEditing && (
-            <Box sx={{display:"flex",ml:"auto"}}>
-              <Button  onClick={() => setIsEditing(true)} sx={{width:"10px"}}><EditIcon sx={{ fontSize: 25 }} /></Button>
-              <Button onClick={handleDelete} disabled={isDeleting}> <DeleteIcon sx={{ fontSize: 25 }} color="error" /></Button>
+            <Box sx={{ display: "flex", ml: "auto" }}>
+              <Button onClick={() => setIsEditing(true)} sx={{ width: "10px" }}>
+                <EditIcon sx={{ fontSize: 25 }} />
+              </Button>
+              <Button onClick={handleDelete} disabled={isDeleting}>
+                {" "}
+                <DeleteIcon sx={{ fontSize: 25 }} color="error" />
+              </Button>
             </Box>
           )}
         </Box>
@@ -97,7 +106,14 @@ export default function CommentItem({ comment, currentUserId }: CommentItemProps
             </Box>
           </Box>
         ) : (
-          <Typography sx={{ fontSize: 13, color: "#374151", mt: 0.5, whiteSpace: "pre-wrap" }}>
+          <Typography
+            sx={{
+              fontSize: 13,
+              color: "#374151",
+              mt: 0.5,
+              whiteSpace: "pre-wrap",
+            }}
+          >
             {comment.comment}
           </Typography>
         )}

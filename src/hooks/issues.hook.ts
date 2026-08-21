@@ -7,25 +7,44 @@ import {
   getFetchIssueById,
   updateIssueStatus,
   updateIssue,
-  deleteIssue, 
+  deleteIssue,
 } from "../api/issues.api";
 import type { IssueFormData } from "../utils/issue.types";
 import queryClient from "./queryClient";
 
-export const useGetIssues = (search:string) => {
+export const useGetIssues = (search: string) => {
   return useQuery({
-    queryKey: ["get-issues",search],
-    queryFn: async ()=>{
+    queryKey: ["get-issues", search],
+    queryFn: async () => {
       return fetchIssues(search);
     },
   });
 };
 
-export const useGetProjectIssues = (projectId: string,pageNumber:number,pageRecords:number,field:string,value:string) => {
+export const useGetProjectIssues = (
+  projectId: string,
+  pageNumber: number,
+  pageRecords: number,
+  field: string,
+  value: string,
+) => {
   return useQuery({
-    queryKey: ["get-project-issues", projectId,pageNumber,pageRecords,field,value],
+    queryKey: [
+      "get-project-issues",
+      projectId,
+      pageNumber,
+      pageRecords,
+      field,
+      value,
+    ],
     queryFn: async () => {
-      const response = await fetchProjectIssues(projectId,pageNumber,pageRecords,field,value);
+      const response = await fetchProjectIssues(
+        projectId,
+        pageNumber,
+        pageRecords,
+        field,
+        value,
+      );
       return response;
     },
   });
@@ -50,7 +69,7 @@ export const useGetProjectMembers = (prjectId: string) => {
       const response = await fetchProjectMembers(prjectId);
       return response;
     },
-    staleTime:2*60*1000,
+    staleTime: 2 * 60 * 1000,
     enabled: !!prjectId,
   });
 };
@@ -95,16 +114,20 @@ export const useUpdateIssue = (projectId: string, isAuthor: boolean) => {
       const response = await updateIssue(issueId, data);
       return response;
     },
-    onSuccess: ()=>{
-      queryClient.invalidateQueries({queryKey:["get-project-issues", projectId]})
-    }
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["get-project-issues", projectId],
+      });
+    },
   });
 };
-export const useIssueDelete = (projectId:string) => {
+export const useIssueDelete = (projectId: string) => {
   return useMutation({
     mutationFn: deleteIssue,
-    onSuccess: ()=>{
-      queryClient.invalidateQueries({queryKey:["get-project-issues", projectId]})
-    }
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["get-project-issues", projectId],
+      });
+    },
   });
 };

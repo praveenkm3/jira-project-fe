@@ -7,17 +7,15 @@ import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
-import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
+import PersonAddAlt1OutlinedIcon from "@mui/icons-material/PersonAddAlt1Outlined";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import type { ProjectType } from "../utils/project.types";
 import { UseAuth } from "../contexts/AuthContext";
 import AddMembers from "../dialogs/AddMembers";
-import PersonRemoveAlt1OutlinedIcon from '@mui/icons-material/PersonRemoveAlt1Outlined';
+import PersonRemoveAlt1OutlinedIcon from "@mui/icons-material/PersonRemoveAlt1Outlined";
 import EditMembers from "../dialogs/EditMembers";
 import { initials } from "../algorithms/strings_operations";
-
-
 
 export default function ProjectCard({ project }: { project: ProjectType }) {
   const navigate = useNavigate();
@@ -32,7 +30,7 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
       variant="outlined"
       sx={{
         borderRadius: "12px",
-        borderColor: "#EAEAEC", 
+        borderColor: "#EAEAEC",
         boxShadow: 10,
         minHeight: 200,
         display: "flex",
@@ -72,9 +70,12 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
             label={project.project_status}
             size="small"
             sx={{
-              
-              bgcolor: project.project_status==='ACTIVE' ? "rgba(34,197,94,0.12)" :"rgba(99,102,241,0.12)",
-              color:project.project_status==='ACTIVE'? "#15803D" :  "#4338CA",
+              bgcolor:
+                project.project_status === "ACTIVE"
+                  ? "rgba(34,197,94,0.12)"
+                  : "rgba(99,102,241,0.12)",
+              color:
+                project.project_status === "ACTIVE" ? "#15803D" : "#4338CA",
               fontWeight: 600,
               fontSize: 11,
               height: 22,

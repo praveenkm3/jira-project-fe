@@ -6,8 +6,11 @@ import { useGetSpecificProjectMembers } from "../hooks/project.hooks";
 import { useState } from "react";
 export default function Members() {
   const { data, isLoading } = useGetMyProjectForSearch();
-  const [project, setProject] = useState<string>(data ? data[0]?.project_id ?? "" : "");
-  const {data:projectMembers,isFetching:membersFetching}=useGetSpecificProjectMembers(project);
+  const [project, setProject] = useState<string>(
+    data ? (data[0]?.project_id ?? "") : "",
+  );
+  const { data: projectMembers, isFetching: membersFetching } =
+    useGetSpecificProjectMembers(project);
   if (isLoading) {
     return <PageLoader />;
   }
@@ -35,7 +38,7 @@ export default function Members() {
           </Select>
         </FormControl>
       </Box>
-      {!membersFetching && <MembersTable rows={projectMembers}/>}
+      {!membersFetching && <MembersTable rows={projectMembers} />}
     </>
   );
 }

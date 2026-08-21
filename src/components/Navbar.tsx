@@ -20,15 +20,15 @@ import type { ProjectSearchType } from "../utils/project.types";
 import { Profile } from "./Profile";
 import { useEffect } from "react";
 import { Badge } from "@mui/material";
-import type{ Notification } from "../utils/issue.types";
+import type { Notification } from "../utils/issue.types";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function Navbar() {
   const queryClient = useQueryClient();
 
-const { data: notifications = [] } = useGetNotifications();
+  const { data: notifications = [] } = useGetNotifications();
   const navigate = useNavigate();
-  const { data } = useGetMyProjectForSearch(); 
+  const { data } = useGetMyProjectForSearch();
   const { currentUser } = UseAuth()!;
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
@@ -36,35 +36,31 @@ const { data: notifications = [] } = useGetNotifications();
   );
 
   const [search, setSearch] = useState<string>("");
-  const matchedresult = find_prefix_matches(search, data ?? []); 
+  const matchedresult = find_prefix_matches(search, data ?? []);
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:5700");
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         if (data.type === "NEW_NOTIFICATION") {
-        const newNotification: Notification = data.notification;
+          const newNotification: Notification = data.notification;
 
-        queryClient.setQueryData<Notification[]>(
-          ["notifications"],
-          (oldNotifications = []) => { 
-            const alreadyExists = oldNotifications.some(
-              (item) =>
-                item.notification_id ===
-                newNotification.notification_id
-            );
+          queryClient.setQueryData<Notification[]>(
+            ["notifications"],
+            (oldNotifications = []) => {
+              const alreadyExists = oldNotifications.some(
+                (item) =>
+                  item.notification_id === newNotification.notification_id,
+              );
 
-            if (alreadyExists) {
-              return oldNotifications;
-            }
+              if (alreadyExists) {
+                return oldNotifications;
+              }
 
-            return [
-              newNotification,
-              ...oldNotifications,
-            ];
-          }
-        );
-      }
+              return [newNotification, ...oldNotifications];
+            },
+          );
+        }
       } catch (error) {
         console.error("Failed to parse notifications");
       }

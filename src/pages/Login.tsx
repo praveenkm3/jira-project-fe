@@ -5,16 +5,15 @@ import type { loginType } from "../utils/auth.types";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { Link } from "react-router";
 import { useLogin } from "../hooks/auth.hooks";
-import jiraLogo from "../../public/jira_logo.svg"
+import jiraLogo from "../../public/jira_logo.svg";
 import { useNavigate } from "react-router";
 import { UseAuth } from "../contexts/AuthContext";
 import { toast } from "react-toastify";
 
-
 export default function Login() {
   const { mutate } = useLogin();
-  const navigate=useNavigate();
-const {setCurrentUser}=UseAuth()!;
+  const navigate = useNavigate();
+  const { setCurrentUser } = UseAuth()!;
   const {
     register,
     handleSubmit,
@@ -26,12 +25,12 @@ const {setCurrentUser}=UseAuth()!;
   const onSubmit = async (data: loginType) => {
     // console.log(data);
     mutate(data, {
-      onSuccess:(logData)=>{
+      onSuccess: (logData) => {
         setCurrentUser(logData);
-        navigate('/home')
+        navigate("/home");
       },
-      onError:()=>{ 
-        toast.error("Login Failed");   
+      onError: () => {
+        toast.error("Login Failed");
       },
     });
   };
@@ -44,7 +43,7 @@ const {setCurrentUser}=UseAuth()!;
         alignItems: "center",
         minHeight: "90vh",
         width: "100%",
-        position:"fixed"
+        position: "fixed",
       }}
     >
       <Box

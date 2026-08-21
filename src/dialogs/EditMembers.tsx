@@ -6,7 +6,7 @@ import {
   DialogActions,
   Button,
   IconButton,
-  Box, 
+  Box,
   Typography,
   Checkbox,
 } from "@mui/material";
@@ -17,7 +17,7 @@ import { UseAuth } from "../contexts/AuthContext";
 import type { RemoveMembersDialogProps } from "../utils/dialog.types";
 
 function titleCase(name: string) {
-  return name.trim().charAt(0).toUpperCase()+name.slice(1);
+  return name.trim().charAt(0).toUpperCase() + name.slice(1);
 }
 
 export default function EditMembers({
@@ -58,7 +58,9 @@ export default function EditMembers({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{display:"flex",justifyContent:"space-around",gap:40}}>
+      <DialogTitle
+        sx={{ display: "flex", justifyContent: "space-around", gap: 40 }}
+      >
         Remove Members
         <IconButton onClick={onClose} size="small">
           <CloseIcon />
@@ -71,7 +73,6 @@ export default function EditMembers({
         ) : (
           <Box>
             {members.map((m) => {
-
               return (
                 <Box
                   key={m.project_members_id}
@@ -83,9 +84,8 @@ export default function EditMembers({
                   <Checkbox
                     checked={selectedIds.includes(m.user.id as string)}
                     onChange={() => toggleSelect(m.user.id as string)}
-                    disabled={currentUser?.id ===m.user.id}
+                    disabled={currentUser?.id === m.user.id}
                   />
-
 
                   <Box sx={{ ml: 1 }}>
                     <Typography>{titleCase(m.user.email)}</Typography>

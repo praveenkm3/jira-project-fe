@@ -1,4 +1,4 @@
-import type{ ProjectMemberType } from "./project.types";
+import type { ProjectMemberType } from "./project.types";
 export interface RemoveMembersDialogProps {
   open: boolean;
   onClose: () => void;
@@ -9,14 +9,14 @@ export interface AddMembersDialogType {
   open: boolean;
   onClose: () => void;
   projectId: string;
-  existingMemberIds: string[]; 
+  existingMemberIds: string[];
 }
 export interface AddStatusDialogProps {
   open: boolean;
   onClose: () => void;
-  projectId: string; 
+  projectId: string;
 }
 export interface AddDesignationDialogProps {
   open: boolean;
-  onClose: () => void; 
+  onClose: () => void;
 }

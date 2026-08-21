@@ -48,9 +48,9 @@ export const IssueTable = ({ projectId }: { projectId: string }) => {
       flex: 0.5,
       minWidth: 130,
       renderCell(params) {
-        if(params.row.issue_start_date){
+        if (params.row.issue_start_date) {
           return dayjs(params.row.issue_start_date).format("DD MMM YYYY");
-        }else{
+        } else {
           return "Not Started";
         }
       },

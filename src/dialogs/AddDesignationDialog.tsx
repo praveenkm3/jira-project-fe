@@ -8,27 +8,27 @@ import {
   TextField,
 } from "@mui/material";
 
-import type{ AddDesignationDialogProps } from "../utils/dialog.types";
+import type { AddDesignationDialogProps } from "../utils/dialog.types";
 import { useAddDesignation } from "../hooks/designation.hooks";
 import { toast } from "react-toastify";
 export default function AddDesignationDialog({
   open,
-  onClose, 
+  onClose,
 }: AddDesignationDialogProps) {
   const [designation, setDesignation] = useState("");
-const{mutate}=useAddDesignation();
+  const { mutate } = useAddDesignation();
   const handleSubmit = () => {
     const value = designation.trim();
 
     if (!value) return;
-    mutate(designation,{
-      onSuccess:()=>{
+    mutate(designation, {
+      onSuccess: () => {
         toast.success("New Designation Added");
       },
-      onError:()=>{
+      onError: () => {
         toast.error("Designation Not Added");
-      }
-    })
+      },
+    });
     setDesignation("");
     onClose();
   };
@@ -39,19 +39,14 @@ const{mutate}=useAddDesignation();
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      maxWidth="xs"
-    >
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
       <DialogTitle>Add Designation</DialogTitle>
 
       <DialogContent>
         <TextField
           autoFocus
           fullWidth
-          label="Designation" 
+          label="Designation"
           value={designation}
           onChange={(e) => setDesignation(e.target.value)}
           sx={{ mt: 1 }}
@@ -59,9 +54,7 @@ const{mutate}=useAddDesignation();
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={handleClose}>
-          Cancel
-        </Button>
+        <Button onClick={handleClose}>Cancel</Button>
 
         <Button
           variant="contained"
@@ -74,4 +67,3 @@ const{mutate}=useAddDesignation();
     </Dialog>
   );
 }
- 

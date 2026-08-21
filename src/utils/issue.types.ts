@@ -81,7 +81,7 @@ export interface Member {
   name: string;
   email: string;
   role: string;
-  designation:string;
+  designation: string;
 }
 export interface IssueCardProps {
   issue_id: string;
@@ -107,7 +107,7 @@ export interface IssueDeleteDialogProps {
   onClose: () => void;
   projectId: string;
 }
- export type Notification = {
+export type Notification = {
   notification_id: string;
   message: string;
   is_read: boolean;

@@ -18,7 +18,7 @@ export const Dashboard = () => {
           gap: 3,
           mt: 3,
         }}
-      > 
+      >
         <Box
           sx={{
             boxShadow: 2,
@@ -30,7 +30,7 @@ export const Dashboard = () => {
         >
           <PieChartStatus />
         </Box>
- 
+
         <Box
           sx={{
             boxShadow: 2,
@@ -42,7 +42,7 @@ export const Dashboard = () => {
         >
           <RecentOverview />
         </Box>
- 
+
         <Box
           sx={{
             boxShadow: 2,
@@ -54,7 +54,7 @@ export const Dashboard = () => {
         >
           <BarChartPriority />
         </Box>
- 
+
         <Box
           sx={{
             boxShadow: 2,

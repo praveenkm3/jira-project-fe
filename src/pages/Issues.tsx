@@ -58,13 +58,13 @@ export const Issues = () => {
           </Button>
         </Box>
       </Box>
-      <Box sx={{ display: "flex", gap: 3 }}> 
+      <Box sx={{ display: "flex", gap: 3 }}>
         {projectNames.map((key) => {
           return (
             <Box sx={{ flex: 1, maxWidth: 300 }}>
               <Typography sx={{ fontSize: 13, fontWeight: 700, mb: 2 }}>
-            {key} {data[key].length}
-            </Typography>
+                {key} {data[key].length}
+              </Typography>
               {data[key].map((item: cardIssueType) => {
                 return (
                   <IssueCard

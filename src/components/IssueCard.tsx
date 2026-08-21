@@ -7,7 +7,6 @@ import { stringToColor } from "../algorithms/strings_operations";
 import { useGetSpecificProjectStatuses } from "../hooks/project.hooks";
 import type { statusType } from "../utils/use.types";
 
-
 export default function IssueCard({
   title,
   typeText,
@@ -17,9 +16,10 @@ export default function IssueCard({
   onClick,
   issue_id,
   onStatusChange,
-  project_id
+  project_id,
 }: IssueCardProps) {
-const{data:projectStatuses,isFetching:statusesFetching}=useGetSpecificProjectStatuses(project_id);
+  const { data: projectStatuses, isFetching: statusesFetching } =
+    useGetSpecificProjectStatuses(project_id);
 
   return (
     <Box
@@ -71,7 +71,7 @@ const{data:projectStatuses,isFetching:statusesFetching}=useGetSpecificProjectSta
           value={status_id}
           size="small"
           onClick={(e) => e.stopPropagation()}
-          onChange={(e) => { 
+          onChange={(e) => {
             e.stopPropagation();
             onStatusChange?.(issue_id, e.target.value);
           }}
@@ -79,14 +79,17 @@ const{data:projectStatuses,isFetching:statusesFetching}=useGetSpecificProjectSta
             height: 28,
             fontSize: 11,
             fontWeight: 600,
-            width:120
+            width: 120,
           }}
         >
-          {
-            !statusesFetching && projectStatuses.map((item:statusType)=>{
-              return <MenuItem value={item.status_id} key={item.status_name}>{item.status_name}</MenuItem>
-            })
-          }
+          {!statusesFetching &&
+            projectStatuses.map((item: statusType) => {
+              return (
+                <MenuItem value={item.status_id} key={item.status_name}>
+                  {item.status_name}
+                </MenuItem>
+              );
+            })}
         </Select>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>

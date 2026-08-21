@@ -16,7 +16,7 @@ export default function IssueDetail() {
   if (!issue) return <Typography sx={{ p: 3 }}>Issue not found.</Typography>;
 
   const isOverdue = dayjs(issue.issue_due_date).isBefore(dayjs(), "day");
-  
+
   return (
     <Box sx={{ width: "90%", mx: "auto", boxShadow: 2, p: 4 }}>
       <Typography sx={{ fontSize: 20, fontWeight: 600, mb: 2 }}>

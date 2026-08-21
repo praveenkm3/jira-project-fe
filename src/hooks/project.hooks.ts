@@ -13,7 +13,7 @@ import {
   getMyProjectForSearch,
   getSpecificProjectMembers,
   getSpecificProjectStatuses,
-  addProjectStatuses
+  addProjectStatuses,
 } from "../api/project.api";
 import type { ProjectFormData } from "../utils/project.types";
 
@@ -42,7 +42,7 @@ export const useAddProject = (isAdmin: boolean) => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["all-projects"] }); 
+      queryClient.invalidateQueries({ queryKey: ["all-projects"] });
       queryClient.invalidateQueries({ queryKey: ["my-project-search"] });
     },
   });
@@ -61,11 +61,11 @@ export const useUpdateProject = (isAdmin: boolean, projectId: string) => {
     },
   });
 };
-export const useFetchAllUsers = (isAdmin:boolean) => {
+export const useFetchAllUsers = (isAdmin: boolean) => {
   return useQuery({
     queryKey: ["fetch-users"],
     queryFn: getAllUsers,
-    enabled:isAdmin
+    enabled: isAdmin,
   });
 };
 export const useAddProjectMembers = (isAdmin: boolean, projectId: string) => {
@@ -79,7 +79,9 @@ export const useAddProjectMembers = (isAdmin: boolean, projectId: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-projects"] });
-      queryClient.invalidateQueries({ queryKey: ["get-specifc-project-members",projectId] });
+      queryClient.invalidateQueries({
+        queryKey: ["get-specifc-project-members", projectId],
+      });
     },
   });
 };
@@ -119,46 +121,45 @@ export const useProjectDelete = () => {
 export const useGetMyProjectForSearch = () => {
   return useQuery({
     queryKey: ["my-project-search"],
-    queryFn:getMyProjectForSearch
+    queryFn: getMyProjectForSearch,
   });
 };
-export const useGetSpecificProjectMembers = (projectId:string) => {
+export const useGetSpecificProjectMembers = (projectId: string) => {
   return useQuery({
-    queryKey: ["get-specifc-project-members",projectId],
-    queryFn:async ()=>{
-      const result=await getSpecificProjectMembers(projectId);
+    queryKey: ["get-specifc-project-members", projectId],
+    queryFn: async () => {
+      const result = await getSpecificProjectMembers(projectId);
       return result;
-    }
+    },
   });
 };
 
-export const useGetSpecificProjectStatuses = (projectId:string) => {
+export const useGetSpecificProjectStatuses = (projectId: string) => {
   return useQuery({
-    queryKey: ["get-specifc-project-statuses",projectId],
-    queryFn:async ()=>{
-      const result=await getSpecificProjectStatuses(projectId);
+    queryKey: ["get-specifc-project-statuses", projectId],
+    queryFn: async () => {
+      const result = await getSpecificProjectStatuses(projectId);
       return result;
-    }
+    },
   });
 };
 
-export const useAddProjectStatuses = (projectId:string,isAdmin:boolean) => {
+export const useAddProjectStatuses = (projectId: string, isAdmin: boolean) => {
   return useMutation({
-    mutationFn:async (status_name:string)=>{
+    mutationFn: async (status_name: string) => {
       if (!isAdmin) {
         throw new Error("Only admins can Add statuses");
       }
-      const result=await addProjectStatuses(projectId,status_name);
+      const result = await addProjectStatuses(projectId, status_name);
       return result;
     },
-    onSuccess:()=>{
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["get-project-issues", projectId],
       });
       queryClient.invalidateQueries({
         queryKey: ["get-specifc-project-statuses", projectId],
       });
-    }
-    
-  })
+    },
+  });
 };

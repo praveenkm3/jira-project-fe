@@ -1,6 +1,6 @@
 export const bubble_sort = <T>(
   arr: T[],
-  compare: (a: T, b: T) => number
+  compare: (a: T, b: T) => number,
 ): T[] => {
   if (!arr || arr.length <= 0) {
     return [];

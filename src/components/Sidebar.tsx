@@ -14,7 +14,7 @@ import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import BugReportOutlinedIcon from "@mui/icons-material/BugReportOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import type { layoutProp } from "../utils/use.types";
-import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import Navbar from "./Navbar";
 import { useNavigate, useLocation } from "react-router";
 import { UseAuth } from "../contexts/AuthContext";
@@ -56,15 +56,14 @@ const mainNav = [
     path: "/designations",
     roles: ["admin"],
   },
-  
 ];
 
 export default function Sidebar({ children }: layoutProp) {
-  const {currentUser}=UseAuth()!;
-  const role=currentUser?.role as string;
+  const { currentUser } = UseAuth()!;
+  const role = currentUser?.role as string;
   const navigate = useNavigate();
   const location = useLocation();
-  const navList = mainNav.filter((item)=>item.roles.includes(role));
+  const navList = mainNav.filter((item) => item.roles.includes(role));
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />

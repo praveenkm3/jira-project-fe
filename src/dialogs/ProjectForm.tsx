@@ -26,7 +26,7 @@ const textFieldSx = {
     "&:hover fieldset": { borderColor: "#94a3b8" },
     "&.Mui-focused fieldset": { borderColor: "#3b82f6", borderWidth: 2 },
   },
-}; 
+};
 interface ProjectForm {
   open: boolean;
   onClose: () => void;

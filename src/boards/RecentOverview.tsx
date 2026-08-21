@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import PageLoader from "../components/Loader"; 
+import PageLoader from "../components/Loader";
 import { getCurrentHours } from "../algorithms/strings_operations";
 import { useGetMyComments } from "../hooks/comment.hooks";
 import type { UserComments } from "../utils/comments.types";

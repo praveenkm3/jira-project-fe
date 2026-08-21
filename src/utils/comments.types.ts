@@ -12,7 +12,7 @@ export interface CommentType {
   createdAt: string;
   updatedAt: string;
 }
-export type commentUpdateType = { 
+export type commentUpdateType = {
   message: string;
 };
 export interface CommentItemProps {

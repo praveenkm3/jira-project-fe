@@ -1,5 +1,8 @@
 import { useParams } from "react-router";
-import { useFetchSpecificProject, useProjectDelete } from "../hooks/project.hooks";
+import {
+  useFetchSpecificProject,
+  useProjectDelete,
+} from "../hooks/project.hooks";
 import PageLoader from "./Loader";
 import {
   Box,
@@ -16,18 +19,18 @@ import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import ProjectForm from "../dialogs/ProjectForm";
 import { IssueTable } from "./IssueTable";
-import IssueFormDialog from "../dialogs/IssueForm"; 
+import IssueFormDialog from "../dialogs/IssueForm";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import AddNewStatus from "../dialogs/AddNewStatus";
 
 export const ProjectDetails = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const { projectId } = useParams();
   const { data: project, isLoading } = useFetchSpecificProject(
     projectId as string,
   );
-  const {mutate:deleteProjectMutate}=useProjectDelete();
+  const { mutate: deleteProjectMutate } = useProjectDelete();
   const { currentUser } = UseAuth()!;
   const isAdmin = currentUser ? currentUser.role === "admin" : false;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -94,15 +97,15 @@ export const ProjectDetails = () => {
                 sx={{ color: "error.main" }}
                 onClick={() => {
                   setAnchorEl(null);
-                  deleteProjectMutate(project.project_id,{
-                    onSuccess:()=>{
+                  deleteProjectMutate(project.project_id, {
+                    onSuccess: () => {
                       toast.success("Project Deleted Successfully");
-                      navigate('/projects')
+                      navigate("/projects");
                     },
-                    onError:()=>{
+                    onError: () => {
                       toast.error("Project Not Deleted");
-                    }
-                  })
+                    },
+                  });
                 }}
               >
                 Delete Project
@@ -123,26 +126,27 @@ export const ProjectDetails = () => {
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
           Issues
         </Typography>
-        <Box sx={{display:"flex",gap:3}}> 
-          {isAdmin && <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setStatusDialogOpen(true)}
-          sx={{ borderRadius: 2, textTransform: "none" }}
-        >
-          Add Statuses
-        </Button>}
+        <Box sx={{ display: "flex", gap: 3 }}>
+          {isAdmin && (
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => setStatusDialogOpen(true)}
+              sx={{ borderRadius: 2, textTransform: "none" }}
+            >
+              Add Statuses
+            </Button>
+          )}
           <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setIssueDialogOpen(true)}
-          sx={{ borderRadius: 2, textTransform: "none" }}
-        >
-          Add Issue
-        </Button>
-        
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setIssueDialogOpen(true)}
+            sx={{ borderRadius: 2, textTransform: "none" }}
+          >
+            Add Issue
+          </Button>
         </Box>
-      </Box> 
+      </Box>
 
       <IssueTable projectId={projectId as string} />
 
@@ -151,20 +155,17 @@ export const ProjectDetails = () => {
         onClose={() => setEditOpen(false)}
         initialData={project}
       />
-      
+
       <IssueFormDialog
         open={issueDialogOpen}
-        onClose={() => setIssueDialogOpen(false)} 
+        onClose={() => setIssueDialogOpen(false)}
         projectId={project.project_id}
       />
       <AddNewStatus
-      open={statusDialogOpen}
-      onClose={()=>setStatusDialogOpen(false)}
-      projectId={projectId!}
-      
+        open={statusDialogOpen}
+        onClose={() => setStatusDialogOpen(false)}
+        projectId={projectId!}
       />
-
     </>
-  
   );
 };

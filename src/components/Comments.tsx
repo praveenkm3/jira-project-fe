@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Box, Typography, TextField, Button, Divider } from "@mui/material";
 import { toast } from "react-toastify";
-import { useFetchComments,useAddComment } from "../hooks/comment.hooks";
+import { useFetchComments, useAddComment } from "../hooks/comment.hooks";
 import { UseAuth } from "../contexts/AuthContext";
 import CommentItem from "../components/CommentItem";
 import type { CommentType } from "../utils/comments.types";
-
 
 export default function CommentSection({ issueId }: { issueId: string }) {
   const { currentUser } = UseAuth()!;
@@ -17,7 +16,10 @@ export default function CommentSection({ issueId }: { issueId: string }) {
   const handleAdd = () => {
     if (!newComment.trim()) return;
     addComment(newComment, {
-      onSuccess: () => {setNewComment("");toast.success("New Comment Added")},
+      onSuccess: () => {
+        setNewComment("");
+        toast.success("New Comment Added");
+      },
       onError: () => toast.error("Failed to add comment"),
     });
   };
@@ -51,11 +53,17 @@ export default function CommentSection({ issueId }: { issueId: string }) {
       </Box>
 
       {isLoading ? (
-        <Typography sx={{ fontSize: 13, color: "#9CA3AF" }}>Loading comments...</Typography>
+        <Typography sx={{ fontSize: 13, color: "#9CA3AF" }}>
+          Loading comments...
+        </Typography>
       ) : comments?.length ? (
-        comments.map((comment:CommentType, i:number) => (
+        comments.map((comment: CommentType, i: number) => (
           <Box key={comment.comment_id}>
-            <CommentItem comment={comment} currentUserId={currentUser!.id as string} issueId={issueId} />
+            <CommentItem
+              comment={comment}
+              currentUserId={currentUser!.id as string}
+              issueId={issueId}
+            />
             {i < comments.length - 1 && <Divider sx={{ my: 1 }} />}
           </Box>
         ))

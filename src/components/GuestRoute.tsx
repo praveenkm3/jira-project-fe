@@ -4,7 +4,7 @@ import { UseAuth } from "../contexts/AuthContext";
 export function GuestRoute() {
   const { currentUser } = UseAuth()!;
 
-  if (currentUser) { 
+  if (currentUser) {
     return <Navigate to="/projects" replace />;
   }
 

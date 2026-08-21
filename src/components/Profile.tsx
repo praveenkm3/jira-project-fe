@@ -23,7 +23,7 @@ export const Profile = ({
   const { mutate } = useLogout();
   const { removeUser } = UseAuth()!;
   const navigate = useNavigate();
-  const { data: profileData, isLoading } = useGetProfile(); 
+  const { data: profileData, isLoading } = useGetProfile();
   const open = Boolean(anchorEl);
   const handleLogout = () => {
     mutate(undefined, {
@@ -32,7 +32,6 @@ export const Profile = ({
         toast.success("Logout Success");
         queryClient.clear();
         navigate("/login");
-
       },
       onError: () => {
         toast.error("Logout Not Success");
@@ -78,7 +77,11 @@ export const Profile = ({
                 {toTitleCase(profileData!.email)}
               </Typography>
               <Chip
-                label={ !profileData!.designation ? "Admin" : toTitleCase(profileData!.designation)}
+                label={
+                  !profileData!.designation
+                    ? "Admin"
+                    : toTitleCase(profileData!.designation)
+                }
                 size="small"
                 variant="outlined"
                 color={profileData!.role === "admin" ? "success" : "primary"}

@@ -5,10 +5,10 @@ export interface MemberType {
   email: string;
   password: string;
   role: {
-    role_name:string,
-    role_id?:string
+    role_name: string;
+    role_id?: string;
   };
-  id?:string
+  id?: string;
 }
 
 export interface ProjectMemberType {
@@ -29,9 +29,9 @@ export interface ProjectFormData {
   project_name: string;
   project_key: string;
   project_description: string;
-  project_status: ProjectStatus
+  project_status: ProjectStatus;
 }
-export type ProjectSearchType={
-    project_id:string,
-    project_name:string
-}
+export type ProjectSearchType = {
+  project_id: string;
+  project_name: string;
+};

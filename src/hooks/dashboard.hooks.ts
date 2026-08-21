@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { boardProgressCounts,boardStatusCounts,boardPriorityCounts ,boardTypeCounts} from "../api/dashboard.api";
+import {
+  boardProgressCounts,
+  boardStatusCounts,
+  boardPriorityCounts,
+  boardTypeCounts,
+} from "../api/dashboard.api";
 
 export const useGetBoardProgressCounts = () => {
   return useQuery({

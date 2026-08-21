@@ -1,22 +1,22 @@
-import axios from "axios"; 
+import axios from "axios";
 
-export const api=axios.create({
-    baseURL:"http://localhost:5700",
-    withCredentials:true
+export const api = axios.create({
+  baseURL: "http://localhost:5700",
+  withCredentials: true,
 });
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config; 
+    const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const url = originalRequest.url; 
+      const url = originalRequest.url;
       // Skip refresh logic if the failed request(to prevent from repeated requests)
       if (url.includes("/api/refresh")) {
         return Promise.reject(error);
       }
       try {
-        await api.post("/api/refresh",{},{ withCredentials: true });
+        await api.post("/api/refresh", {}, { withCredentials: true });
         return axios(originalRequest);
       } catch (err) {
         window.location.href = "/login"; //no refresh token then go back to login page again

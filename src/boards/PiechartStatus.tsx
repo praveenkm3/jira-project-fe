@@ -48,25 +48,18 @@ export const PieChartStatus = () => {
 
       statusMap[status] = (statusMap[status] || 0) + count;
     },
-  ); 
-  const data = Object.entries(statusMap).map(
-    ([status, value], index) => ({
-      id: status,
-      label: status,
-      value:value,
-      color: colors[index % colors.length],
-    }),
-  ); 
-  const total = data.reduce(
-    (sum, item) => sum + item.value,
-    0,
   );
+  const data = Object.entries(statusMap).map(([status, value], index) => ({
+    id: status,
+    label: status,
+    value: value,
+    color: colors[index % colors.length],
+  }));
+  const total = data.reduce((sum, item) => sum + item.value, 0);
 
   return (
     <Box>
-      <Typography sx={{ fontWeight: 700 }}>
-        Status Overview
-      </Typography>
+      <Typography sx={{ fontWeight: 700 }}>Status Overview</Typography>
 
       <Typography sx={{ fontWeight: 500 }}>
         Get a snapshot of the work items
@@ -94,7 +87,8 @@ export const PieChartStatus = () => {
         />
         <Box sx={{ mt: 10 }}>
           {data.map((item) => {
-            const percentage =total > 0 ? Math.round((item.value / total) * 100) : 0;
+            const percentage =
+              total > 0 ? Math.round((item.value / total) * 100) : 0;
             return (
               <Box
                 key={item.id}
@@ -124,13 +118,9 @@ export const PieChartStatus = () => {
                     }}
                   />
 
-                  <Typography>
-                    {item.label}
-                  </Typography>
+                  <Typography>{item.label}</Typography>
                 </Box>
-                <Typography sx={{ fontWeight: 700 }}>
-                  {percentage}%
-                </Typography>
+                <Typography sx={{ fontWeight: 700 }}>{percentage}%</Typography>
               </Box>
             );
           })}

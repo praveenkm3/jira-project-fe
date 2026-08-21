@@ -11,22 +11,18 @@ export const BarChartType = () => {
   }
 
   const typeNames = data.map(
-    (item: { type: string; count: number | string }) => item.type
+    (item: { type: string; count: number | string }) => item.type,
   );
 
   const typeCounts = data.map(
-    (item: { type: string; count: number | string }) => Number(item.count)
+    (item: { type: string; count: number | string }) => Number(item.count),
   );
 
   return (
     <Box>
-      <Typography sx={{ fontWeight: 700 }}>
-        Issue Overview
-      </Typography>
+      <Typography sx={{ fontWeight: 700 }}>Issue Overview</Typography>
 
-      <Typography sx={{ fontWeight: 500 }}>
-        Issue Type Breakdown
-      </Typography>
+      <Typography sx={{ fontWeight: 500 }}>Issue Type Breakdown</Typography>
 
       <BarChart
         layout="horizontal"
@@ -37,11 +33,7 @@ export const BarChartType = () => {
             colorMap: {
               type: "ordinal",
               values: ["Feature", "Task", "Bug"],
-              colors: [
-                "#3b82f6",
-                "#22c55e",  
-                "#f5510b",  
-              ],
+              colors: ["#3b82f6", "#22c55e", "#f5510b"],
             },
           },
         ]}
@@ -54,8 +46,8 @@ export const BarChartType = () => {
         series={[
           {
             data: typeCounts,
-            label: "Issue Types", 
-            color:"none"
+            label: "Issue Types",
+            color: "none",
           },
         ]}
         height={250}
