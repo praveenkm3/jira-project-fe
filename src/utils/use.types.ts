@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
-export type layoutProp={
-    children:ReactNode
-}
- 
+export type layoutProp = {
+  children: ReactNode;
+};
+
 export interface UserContextType {
   currentUser: CurrentuserType | null;
-  setCurrentUser: React.Dispatch<React.SetStateAction<CurrentuserType | null >>;
+  setCurrentUser: React.Dispatch<React.SetStateAction<CurrentuserType | null>>;
   removeUser: () => void;
 }
 
@@ -14,5 +14,22 @@ export type CurrentuserType = {
   exp?: number;
   iat?: number;
   role?: string;
-  userId?: number;
+  id?: number | string;
 };
+export type notifyType = {
+  notification_id: string;
+  is_read: boolean;
+  message: string;
+  createdAt: string;
+};
+
+export interface UserOption {
+  id: string;
+  name: string;
+  status: string;
+  email: string;
+  role: string;
+  joinedat?: string;
+  designation: string;
+}
+export type statusType = { status_id: string; status_name: string };

@@ -11,11 +11,12 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import PageLoader from "./Loader";
+import PageLoader from "../components/Loader";
 import { useAddProject, useUpdateProject } from "../hooks/project.hooks";
 import { UseAuth } from "../contexts/AuthContext";
 import type { ProjectFormData, ProjectStatus } from "../utils/project.types";
 import { toast } from "react-toastify";
+import { projectSchema } from "../utils/forms.schema";
 const STATUS_OPTIONS: ProjectStatus[] = ["ACTIVE", "COMPLETED"];
 
 const textFieldSx = {
@@ -26,7 +27,6 @@ const textFieldSx = {
     "&.Mui-focused fieldset": { borderColor: "#3b82f6", borderWidth: 2 },
   },
 };
-
 interface ProjectForm {
   open: boolean;
   onClose: () => void;
@@ -51,10 +51,15 @@ export default function ProjectForm({
   const isEditMode = !!initialData;
 
   const { mutate: addProject, isPending: isAdding } = useAddProject(isAdmin);
-  const { mutate: updateProject, isPending: isUpdating } =useUpdateProject(isAdmin,initialData?.project_id as string);
+  const { mutate: updateProject, isPending: isUpdating } = useUpdateProject(
+    isAdmin,
+    initialData?.project_id as string,
+  );
 
   const [formData, setFormData] = useState<ProjectFormData>(emptyForm);
-
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ProjectFormData, string>>
+  >({});
   useEffect(() => {
     if (open) {
       setFormData(initialData ?? emptyForm);
@@ -64,13 +69,37 @@ export default function ProjectForm({
   const handleChange =
     (field: keyof ProjectFormData) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+      const value = e.target.value;
+
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+
+      setErrors((prev) => ({
+        ...prev,
+        [field]: undefined,
+      }));
     };
 
   const handleSubmit = () => {
+    const result = projectSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof ProjectFormData, string>> = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof ProjectFormData;
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = issue.message;
+        }
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
+
     if (isEditMode && initialData?.project_id) {
-      alert(JSON.stringify(formData))
-      updateProject(formData, {
+      updateProject(result.data, {
         onSuccess: () => {
           toast.success("Project Updated successfully");
           onClose();
@@ -78,7 +107,7 @@ export default function ProjectForm({
         onError: () => toast.error("Project not updated"),
       });
     } else {
-      addProject(formData, {
+      addProject(result.data, {
         onSuccess: () => {
           toast.success("Project created successfully");
           onClose();
@@ -114,6 +143,8 @@ export default function ProjectForm({
             onChange={handleChange("project_name")}
             fullWidth
             sx={textFieldSx}
+            error={!!errors.project_name}
+            helperText={errors.project_name}
           />
           <TextField
             label="Project Key"
@@ -122,6 +153,8 @@ export default function ProjectForm({
             fullWidth
             sx={textFieldSx}
             disabled={isEditMode}
+            error={!!errors.project_key}
+            helperText={errors.project_key}
           />
           <TextField
             label="Project Description"

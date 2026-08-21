@@ -1,30 +1,40 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { registerType } from "../utils/auth.types";
-import { registerSchema } from "../utils/auth.schema";
+import type { registerType, designationType } from "../utils/auth.types";
+import { createRegisterSchema } from "../utils/auth.schema";
 import jiraLogo from "../../public/jira_logo.svg";
 import { toast } from "react-toastify";
+import { toTitleCase } from "../algorithms/strings_operations";
 import {
   Box,
   Button,
   FormControl,
-  FormLabel,
-  Radio,
-  RadioGroup,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
 import { Link } from "react-router";
-import { useRegister } from "../hooks/auth.hooks";
+import {
+  useGetDesignationService,
+  useGetRoleService,
+  useRegister,
+} from "../hooks/auth.hooks";
 import { useNavigate } from "react-router";
 
 function Register() {
   const { mutate } = useRegister();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const { data: roles } = useGetRoleService();
+  const registerSchema = createRegisterSchema(roles ?? []);
+  const { data: designations } = useGetDesignationService();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<registerType>({ resolver: zodResolver(registerSchema) });
 
   const onSubmit = async (data: registerType) => {
@@ -32,15 +42,21 @@ function Register() {
     mutate(data, {
       onSuccess: () => {
         toast.success("Registration Successfull");
-        navigate('/login');
-        
+        navigate("/login");
       },
       onError: () => {
-        toast.success("Registration Not Successfull"); 
+        toast.error("Registration Not Successfull");
       },
     });
   };
 
+  const selectedRoleId = watch("role");
+  const selectedRole = roles?.find(
+    (role: { role_id: string; role_name: string }) =>
+      role.role_id === selectedRoleId,
+  );
+
+  const isUserRole = selectedRole?.role_name.toLowerCase() === "user";
   return (
     <Box
       sx={{
@@ -116,39 +132,52 @@ function Register() {
           error={!!errors.password}
           helperText={errors.password?.message}
         />
-        <FormControl error={!!errors.role}>
-          <FormLabel>Role</FormLabel>
-          <RadioGroup row>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 2,
-                px: 1,
-                mr: 1,
-              }}
-            >
-              <Radio value="admin" {...register("role")} />
-              <Typography>Admin</Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 2,
-                px: 1,
-              }}
-            >
-              <Radio value="developer" {...register("role")} />
-              <Typography>Developer</Typography>
-            </Box>
-          </RadioGroup>
-        </FormControl>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <FormControl fullWidth error={!!errors.role}>
+            <InputLabel>Role</InputLabel>
 
+            <Select label="Role" defaultValue="" {...register("role")}>
+              <MenuItem value="" disabled>
+                Select a role
+              </MenuItem>
+
+              {roles?.map((role: { role_id: string; role_name: string }) => (
+                <MenuItem key={role.role_id} value={role.role_id}>
+                  {toTitleCase(role.role_name)}
+                </MenuItem>
+              ))}
+            </Select>
+
+            {errors.role && (
+              <FormHelperText>{errors.role.message}</FormHelperText>
+            )}
+          </FormControl>
+          {isUserRole && (
+            <FormControl fullWidth error={!!errors.designation_id}>
+              <InputLabel>Designation</InputLabel>
+              <Select
+                label="Designation"
+                defaultValue=""
+                {...register("designation_id")}
+              >
+                <MenuItem value="" disabled>
+                  Select a designation
+                </MenuItem>
+                {designations?.map((designation: designationType) => (
+                  <MenuItem
+                    key={designation.designation_id}
+                    value={designation.designation_id}
+                  >
+                    {toTitleCase(designation.designation_name)}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors.designation_id && (
+                <FormHelperText>{errors.designation_id.message}</FormHelperText>
+              )}
+            </FormControl>
+          )}
+        </Box>
         <Button type="submit" variant="contained" fullWidth>
           Register
         </Button>

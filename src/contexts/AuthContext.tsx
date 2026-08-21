@@ -22,7 +22,6 @@ export default function AuthProvider({ children }: layoutProp) {
           {},
           { withCredentials: true },
         );
-        // console.log(response);
         setCurrentUser(response.data);
       } catch (err) {
         console.log(err);
