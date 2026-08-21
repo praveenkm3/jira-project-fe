@@ -7,29 +7,72 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip"; 
-import jiraSvg from "../../public/jira_logo.svg"; 
+import Tooltip from "@mui/material/Tooltip";
+import jiraSvg from "../../public/jira_logo.svg";
 import { useNavigate } from "react-router";
-import { UseAuth } from "../contexts/AuthContext"; 
+import { UseAuth } from "../contexts/AuthContext";
 import Notifications from "./Notifications";
 import NotificationsIcon from "@mui/icons-material/NotificationsOutlined";
 import { useGetMyProjectForSearch } from "../hooks/project.hooks";
 import { find_prefix_matches } from "../algorithms/binary_search";
-import type { ProjectSearchType } from "../utils/project.types"; 
+import { useGetNotifications } from "../hooks/notify.hooks";
+import type { ProjectSearchType } from "../utils/project.types";
 import { Profile } from "./Profile";
+import { useEffect } from "react";
+import { Badge } from "@mui/material";
+import type{ Notification } from "../utils/issue.types";
+import { useQueryClient } from "@tanstack/react-query";
 
-export default function Navbar() { 
+export default function Navbar() {
+  const queryClient = useQueryClient();
+
+const { data: notifications = [] } = useGetNotifications();
   const navigate = useNavigate();
-  const { data } = useGetMyProjectForSearch();
-  const { currentUser } = UseAuth()!; 
-//  console.log(currentUser)
+  const { data } = useGetMyProjectForSearch(); 
+  const { currentUser } = UseAuth()!;
   const [notifAnchorEl, setNotifAnchorEl] = useState<null | HTMLElement>(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
     null,
   );
+
   const [search, setSearch] = useState<string>("");
-  const matchedresult = find_prefix_matches(search, data ?? []);
-   
+  const matchedresult = find_prefix_matches(search, data ?? []); 
+  useEffect(() => {
+    const socket = new WebSocket("ws://localhost:5700");
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "NEW_NOTIFICATION") {
+        const newNotification: Notification = data.notification;
+
+        queryClient.setQueryData<Notification[]>(
+          ["notifications"],
+          (oldNotifications = []) => { 
+            const alreadyExists = oldNotifications.some(
+              (item) =>
+                item.notification_id ===
+                newNotification.notification_id
+            );
+
+            if (alreadyExists) {
+              return oldNotifications;
+            }
+
+            return [
+              newNotification,
+              ...oldNotifications,
+            ];
+          }
+        );
+      }
+      } catch (error) {
+        console.error("Failed to parse notifications");
+      }
+    };
+    return () => {
+      socket.close();
+    };
+  }, [queryClient]);
 
   return (
     <Toolbar sx={{ gap: 1.5 }}>
@@ -115,15 +158,24 @@ export default function Navbar() {
       </Box>
 
       <IconButton onClick={(e) => setNotifAnchorEl(e.currentTarget)}>
-        <NotificationsIcon />
+        <Badge
+          color="secondary"
+          badgeContent={notifications.length > 0 ? notifications.length : null}
+        >
+          <NotificationsIcon />
+        </Badge>
       </IconButton>
 
       <Notifications
         anchorEl={notifAnchorEl}
         onClose={() => setNotifAnchorEl(null)}
+        notifications={notifications}
       />
-      <Tooltip title="Account" > 
-        <IconButton onClick={(e)=>setProfileAnchorEl(e.currentTarget)} sx={{ p: 0, ml: 0.5 }}>
+      <Tooltip title="Account">
+        <IconButton
+          onClick={(e) => setProfileAnchorEl(e.currentTarget)}
+          sx={{ p: 0, ml: 0.5 }}
+        >
           <Avatar
             sx={{ width: 34, height: 34, fontSize: 13, bgcolor: "#6366F1" }}
           >
@@ -132,10 +184,9 @@ export default function Navbar() {
         </IconButton>
       </Tooltip>
       <Profile
-            anchorEl={profileAnchorEl}
-            onClose={() => setProfileAnchorEl(null)}
-          />
-
+        anchorEl={profileAnchorEl}
+        onClose={() => setProfileAnchorEl(null)}
+      />
     </Toolbar>
   );
 }

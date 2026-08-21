@@ -20,3 +20,20 @@ export interface CommentItemProps {
   currentUserId: string;
   issueId: string;
 }
+export type UserComments = {
+  comment_id: string;
+  comment: string;
+  createdAt: string;
+  updatedAt: string;
+
+  creator: {
+    id: string;
+    name: string;
+    email: string;
+  };
+
+  issue: {
+    issue_id: string;
+    title: string;
+  };
+};

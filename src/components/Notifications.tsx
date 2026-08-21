@@ -1,34 +1,21 @@
 import Popover from "@mui/material/Popover";
-import { Box, Typography } from "@mui/material"; 
-import { useEffect, useState } from "react";
-
+import { Box, Button, Typography } from "@mui/material";
+import { useReadNotification } from "../hooks/notify.hooks";
+import type { Notification } from "../utils/issue.types";
 export default function Notifications({
   anchorEl,
   onClose,
+  notifications,
 }: {
   anchorEl: HTMLElement | null;
   onClose: () => void;
-}) { 
+  notifications: Notification[];
+}) {
   const open = Boolean(anchorEl);
-  const [notifications, setNotifications] = useState<string[]>([]);
-  useEffect(() => {
-    const socket = new WebSocket("ws://localhost:5700");
-
-    socket.onopen = () => {
-      console.log("WebSocket connected");
-
-      socket.send("Hello from frontend!");
-    };
-    socket.onmessage = (event) => {
-      console.log("Message from backend:", event.data);
-      setNotifications((prev: string[]) => [...prev, event.data]);
-    };
-
-    return () => {
-      socket.close();
-    };
-  }, []);
-
+  const { mutate } = useReadNotification();
+  const handleRead = (notify_id: string) => {
+    mutate(notify_id);
+  };
   return (
     <Popover
       open={open}
@@ -64,33 +51,49 @@ export default function Notifications({
           overflowY: "auto",
         }}
       >
-        {notifications.map((item: string) => (
-          <Box
-            key={item}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-              px: 2,
-              py: 1.5,
-              borderRadius: "8px",
-            }}
-          >
-            <Typography
+        {notifications?.length > 0 ? (
+          notifications.map((item: Notification) => (
+            <Box
+              key={item.notification_id}
               sx={{
-                flex: 1,
-                fontSize: 13,
-                fontWeight: 500,
-                color: "#374151",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
+                display: "flex",
+                alignItems: "center",
+                width: "100%",
+                px: 2,
+                py: 1.5,
+                borderRadius: "8px",
               }}
             >
-              {item}
-            </Typography>
-          </Box>
-        ))} 
+              <Typography
+                sx={{
+                  flex: 1,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "#374151",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {item.message}
+              </Typography>
+              <Button
+                onClick={() => handleRead(item.notification_id)}
+                sx={{
+                  minWidth: 100,
+                  height: 30,
+                  fontSize: 10,
+                  whiteSpace: "nowrap",
+                  px: 1,
+                }}
+              >
+                Mark as Read
+              </Button>
+            </Box>
+          ))
+        ) : (
+          <Typography sx={{ p: 10, ml: 10 }}>No Notifications</Typography>
+        )}
       </Box>
     </Popover>
   );

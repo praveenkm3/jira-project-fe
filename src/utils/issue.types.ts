@@ -107,3 +107,9 @@ export interface IssueDeleteDialogProps {
   onClose: () => void;
   projectId: string;
 }
+ export type Notification = {
+  notification_id: string;
+  message: string;
+  is_read: boolean;
+  createdAt: string;
+};

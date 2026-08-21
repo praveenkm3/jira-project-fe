@@ -6,3 +6,8 @@ export async function getNotifications(){
     return response.data;
     
 }
+export async function readNotifications(notification_id:string){
+    const response=await api.patch(`/api/notifications/${notification_id}`);
+    return response.data;
+    
+}

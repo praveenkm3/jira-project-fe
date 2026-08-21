@@ -1,6 +1,6 @@
 import { useMutation ,useQuery} from "@tanstack/react-query"; 
 import queryClient from "./queryClient";
-import {updateComment,deleteComment, fetchComments, addComment} from "../api/comments.api";
+import {updateComment,deleteComment, fetchComments, addComment,getMyComments} from "../api/comments.api";
 import type{ commentUpdateType } from "../utils/comments.types";
 
 export const useUpdateComment = (commentId:string) => {
@@ -10,6 +10,7 @@ export const useUpdateComment = (commentId:string) => {
     },
     onSuccess:()=>{
         queryClient.invalidateQueries({queryKey:['fetch-comments']})
+        queryClient.invalidateQueries({queryKey:['my-comments']})
     }
   })
 };
@@ -20,6 +21,7 @@ export const useDeleteComment = () => {
     },
     onSuccess:()=>{
         queryClient.invalidateQueries({queryKey:['fetch-comments']})
+        queryClient.invalidateQueries({queryKey:['my-comments']})
     }
   })
 };
@@ -40,6 +42,14 @@ export const useAddComment = (issueId:string) => {
     },
     onSuccess:()=>{
         queryClient.invalidateQueries({queryKey:['fetch-comments']})
+        queryClient.invalidateQueries({queryKey:['my-comments']})
     }
+  })
+};
+
+export const useGetMyComments = () => {
+  return useQuery({
+    queryKey:['my-comments'],
+    queryFn:getMyComments
   })
 };

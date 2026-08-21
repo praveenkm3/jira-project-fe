@@ -19,4 +19,7 @@ export async function addComment(issueId:string,comment:string){
     return response.data;
 }
 
- 
+export async function getMyComments(){
+    const response=await api.get('/api/comments/my-comments');
+    return response.data;
+}
