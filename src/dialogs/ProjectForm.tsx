@@ -16,6 +16,7 @@ import { useAddProject, useUpdateProject } from "../hooks/project.hooks";
 import { UseAuth } from "../contexts/AuthContext";
 import type { ProjectFormData, ProjectStatus } from "../utils/project.types";
 import { toast } from "react-toastify";
+import { projectSchema } from "../utils/forms.schema";
 const STATUS_OPTIONS: ProjectStatus[] = ["ACTIVE", "COMPLETED"];
 
 const textFieldSx = {
@@ -25,29 +26,7 @@ const textFieldSx = {
     "&:hover fieldset": { borderColor: "#94a3b8" },
     "&.Mui-focused fieldset": { borderColor: "#3b82f6", borderWidth: 2 },
   },
-};
-import { z } from "zod";
-
-const projectSchema = z.object({
-  project_name: z
-    .string()
-    .trim()
-    .min(1, "Project Name is required")
-    .max(100, "Project Name must be at most 100 characters"),
-
-  project_key: z
-    .string()
-    .trim()
-    .min(1, "Project Key is required")
-    .max(20, "Project Key must be at most 20 characters"),
-
-  project_description: z
-    .string()
-    .trim()
-    .max(500, "Description must be at most 500 characters"),
-
-  project_status: z.enum(["ACTIVE", "COMPLETED"]),
-});
+}; 
 interface ProjectForm {
   open: boolean;
   onClose: () => void;

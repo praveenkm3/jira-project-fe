@@ -40,7 +40,7 @@ const textFieldSx = {
     "&.Mui-focused fieldset": { borderColor: "#3b82f6", borderWidth: 2 },
   },
 };
-
+import { issueFormSchema } from "../utils/forms.schema";
 const emptyForm: IssueFormData = {
   title: "",
   description: "",
@@ -72,6 +72,9 @@ export default function IssueFormDialog({
     currentUser?.id === issue?.reporter.id ||
     currentUser?.id === issue?.assignee!.id;
   const { mutate: updateIssue } = useUpdateIssue(projectId, isAuthor);
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof IssueFormData, string>>
+  >({});
   useEffect(() => {
     if (!open) return;
 
@@ -105,30 +108,32 @@ export default function IssueFormDialog({
     };
 
   const handleSubmit = () => {
-    if (!formData.title.trim()) {
-      toast.error("Title is required");
-      return;
-    }
-    if (!dueDate) {
-      toast.error("Due date is required");
-      return;
-    }
-    if (startDate && dueDate && startDate.isAfter(dueDate, "day")) {
-      toast.error("Start date cannot be after due date");
-      return;
-    }
-    if (!formData.assignee_id) {
-      toast.error("Assigned user is required");
-      return;
-    }
     const payload = {
       ...formData,
       start_date: startDate ? startDate.format("YYYY-MM-DD") : "",
-      due_date: dueDate.format("YYYY-MM-DD"),
+      due_date: dueDate ? dueDate.format("YYYY-MM-DD") : "",
     };
+    const result = issueFormSchema.safeParse(payload);
+
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof IssueFormData, string>> = {};
+
+      result.error.issues.forEach((error) => {
+        const field = error.path[0] as keyof IssueFormData;
+
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = error.message;
+        }
+      });
+
+      setErrors(fieldErrors);
+      return;
+    }
+    const validatedData = result.data;
+    setErrors({});
     if (issue) {
       updateIssue(
-        { issueId: issue.issue_id, data: payload },
+        { issueId: issue.issue_id, data: validatedData },
         {
           onSuccess: () => {
             toast.success("Issue Updated Successfully");
@@ -172,6 +177,8 @@ export default function IssueFormDialog({
             value={formData.title}
             onChange={handleChange("title")}
             fullWidth
+            error={!!errors.title}
+            helperText={errors.title}
             sx={textFieldSx}
           />
 
@@ -183,6 +190,8 @@ export default function IssueFormDialog({
             multiline
             rows={3}
             sx={textFieldSx}
+            error={!!errors.description}
+            helperText={errors.description}
           />
 
           <Box sx={{ display: "flex", gap: 2 }}>
@@ -193,6 +202,8 @@ export default function IssueFormDialog({
               onChange={handleChange("status_id")}
               fullWidth
               sx={textFieldSx}
+              error={!!errors.status_id}
+              helperText={errors.status_id}
             >
               {!isStatusFetching &&
                 projectStatuses.map((status: statusType) => (
@@ -208,6 +219,8 @@ export default function IssueFormDialog({
               value={formData.priority}
               onChange={handleChange("priority")}
               fullWidth
+              error={!!errors.priority}
+              helperText={errors.priority}
               sx={textFieldSx}
             >
               {PRIORITY_OPTIONS.map((priority) => (
@@ -223,6 +236,8 @@ export default function IssueFormDialog({
               onChange={handleChange("type")}
               fullWidth
               sx={textFieldSx}
+              error={!!errors.type}
+              helperText={errors.type}
             >
               {TYPE_OPTIONS.map((type) => (
                 <MenuItem key={type} value={type}>
@@ -242,6 +257,8 @@ export default function IssueFormDialog({
                 textField: {
                   fullWidth: true,
                   sx: textFieldSx,
+                  error: !!errors.start_date,
+                  helperText: errors.start_date,
                 },
               }}
               disabled={!dueDate}
@@ -255,6 +272,8 @@ export default function IssueFormDialog({
                 textField: {
                   fullWidth: true,
                   sx: textFieldSx,
+                  error: !!errors.due_date,
+                  helperText: errors.due_date,
                 },
               }}
             />
@@ -300,7 +319,13 @@ export default function IssueFormDialog({
               }))
             }
             renderInput={(params) => (
-              <TextField {...params} label="Assignee" sx={textFieldSx} />
+              <TextField
+                {...params}
+                label="Assignee"
+                sx={textFieldSx}
+                error={!!errors.assignee_id}
+                helperText={errors.assignee_id}
+              />
             )}
           />
         </Box>
@@ -313,7 +338,7 @@ export default function IssueFormDialog({
         <Button
           onClick={handleSubmit}
           variant="contained"
-          disabled={isPending || !(!!formData.title)}
+          disabled={isPending || !!!formData.title}
           sx={{ textTransform: "none", borderRadius: 2 }}
         >
           {issue ? "Update" : "Save"}
