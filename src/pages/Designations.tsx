@@ -4,12 +4,42 @@ import { useGetDesignationService } from "../hooks/auth.hooks";
 import { toTitleCase } from "../algorithms/strings_operations";
 import { useState } from "react";
 import AddDesignationDialog from "../dialogs/AddDesignationDialog";
+import { useDeleteDesignation } from "../hooks/designation.hooks";
+import { toast } from "react-toastify";
 
 function Designations() {
   const { data: designations, isLoading } = useGetDesignationService();
+  const { mutate } = useDeleteDesignation();
   const [designationOpen, setDesignationOpen] = useState<boolean>(false);
+  const [designationToEdit, setDesignationToEdit] = useState<{
+    designation_id: string;
+    designation_name: string;
+  }>();
   const handleAddDesignation = () => {
+    setDesignationToEdit(undefined);
     setDesignationOpen(true);
+  };
+  const handleEditDesignation = (designation: {
+    designation_id: string;
+    designation_name: string;
+  }) => {
+    setDesignationToEdit(designation);
+    setDesignationOpen(true);
+  };
+  const handleDelete = (designation_id: string) => {
+    mutate(designation_id, {
+      onSuccess: (data) => {
+        if (data.success) {
+          toast.success("Designation deleted");
+          return;
+        } else {
+          toast.error("Designation currently Using by others");
+        }
+      },
+      onError: () => {
+        toast.success("Designation Not deleted");
+      },
+    });
   };
 
   return (
@@ -69,6 +99,25 @@ function Designations() {
                     <Typography>
                       {toTitleCase(designation.designation_name)}
                     </Typography>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={() => handleEditDesignation(designation)}
+                      >
+                        Update
+                      </Button>
+
+                      <Button
+                        variant="contained"
+                        color="error"
+                        size="small"
+                        onClick={() => handleDelete(designation.designation_id)}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
                   </Box>
                 ),
               )}
@@ -82,7 +131,11 @@ function Designations() {
       </Card>
       <AddDesignationDialog
         open={designationOpen}
-        onClose={() => setDesignationOpen(false)}
+        onClose={() => {
+          setDesignationOpen(false);
+          setDesignationToEdit(undefined);
+        }}
+        designationToEdit={designationToEdit}
       />
     </Box>
   );
