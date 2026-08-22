@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -9,26 +9,56 @@ import {
 } from "@mui/material";
 
 import type { AddDesignationDialogProps } from "../utils/dialog.types";
-import { useAddDesignation } from "../hooks/designation.hooks";
+import {
+  useAddDesignation,
+  useUpdateDesignation,
+} from "../hooks/designation.hooks";
 import { toast } from "react-toastify";
 export default function AddDesignationDialog({
   open,
   onClose,
+  designationToEdit,
 }: AddDesignationDialogProps) {
   const [designation, setDesignation] = useState("");
   const { mutate } = useAddDesignation();
+  const isEditMode = Boolean(designationToEdit);
+
+  const { mutate: updateDesignation } = useUpdateDesignation(
+    designationToEdit?.designation_id ?? "",
+  );
+  useEffect(() => {
+    if (open) {
+      setDesignation(designationToEdit?.designation_name ?? "");
+    }
+  }, [open, designationToEdit]);
   const handleSubmit = () => {
     const value = designation.trim();
 
     if (!value) return;
-    mutate(designation, {
-      onSuccess: () => {
-        toast.success("New Designation Added");
-      },
-      onError: () => {
-        toast.error("Designation Not Added");
-      },
-    });
+    if (isEditMode) {
+      updateDesignation(value, {
+        onSuccess: () => {
+          toast.success("Designation Updated");
+          setDesignation("");
+          onClose();
+        },
+        onError: () => {
+          toast.error("Designation Not Updated");
+        },
+      });
+
+      return;
+    } else {
+      mutate(designation, {
+        onSuccess: () => {
+          toast.success("New Designation Added");
+        },
+        onError: () => {
+          toast.error("Designation Not Added");
+        },
+      });
+    }
+
     setDesignation("");
     onClose();
   };
@@ -40,7 +70,9 @@ export default function AddDesignationDialog({
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
-      <DialogTitle>Add Designation</DialogTitle>
+      <DialogTitle>
+        {isEditMode ? "Update Designation" : "Add Designation"}
+      </DialogTitle>
 
       <DialogContent>
         <TextField
@@ -61,7 +93,7 @@ export default function AddDesignationDialog({
           onClick={handleSubmit}
           disabled={!designation.trim()}
         >
-          Add
+          {isEditMode ? "Update" : "Add"}
         </Button>
       </DialogActions>
     </Dialog>

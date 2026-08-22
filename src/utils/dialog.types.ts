@@ -19,4 +19,5 @@ export interface AddStatusDialogProps {
 export interface AddDesignationDialogProps {
   open: boolean;
   onClose: () => void;
+  designationToEdit:{designation_id:string,designation_name:string} | undefined
 }
