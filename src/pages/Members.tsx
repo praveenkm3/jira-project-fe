@@ -29,7 +29,6 @@ export default function Members() {
               setProject(e.target.value);
             }}
           >
-            {JSON.stringify(projectMembers)}
             {data.map((item: { project_id: string; project_name: string }) => {
               return (
                 <MenuItem value={item.project_id}>{item.project_name}</MenuItem>
