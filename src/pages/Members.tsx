@@ -37,7 +37,7 @@ export default function Members() {
           </Select>
         </FormControl>
       </Box>
-      {!membersFetching && <MembersTable rows={projectMembers} />}
+      {!membersFetching && projectMembers?.length>0 && <MembersTable rows={projectMembers} />}
     </>
   );
 }
